@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get install python-dev
 
 install:
-  - cd desp/libuv && sh ./autogen.sh && ./configure && make && sudo make install
+  - cd deps/libuv && sh ./autogen.sh && ./configure && make && sudo make install
   - cd ../../
   - sudo python setup.py install
 
