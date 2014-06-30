@@ -9,6 +9,7 @@ before_install:
 
 install:
   - cd deps/libuv && sh ./autogen.sh && ./configure && make && sudo make install
+  - sudo ldconfig
   - cd ../../
   - python setup.py install
 
