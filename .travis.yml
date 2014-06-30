@@ -10,6 +10,6 @@ before_install:
 install:
   - cd deps/libuv && sh ./autogen.sh && ./configure && make && sudo make install
   - cd ../../
-  - sudo python setup.py install
+  - python setup.py install
 
 script: python -m unittest discover
