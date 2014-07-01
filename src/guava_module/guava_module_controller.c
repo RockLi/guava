@@ -8,6 +8,7 @@
 #include "guava_module.h"
 #include "guava_response.h"
 #include "guava_session/guava_session.h"
+#include "guava_cookie.h"
 
 static PyObject *Controller_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Controller *self;
@@ -68,18 +69,58 @@ static PyObject *Controller_header(Controller *self, PyObject *args) {
   Py_RETURN_TRUE;
 }
 
-static PyObject *Controller_cookie(Controller *self, PyObject *args) {
+static PyObject *Controller_cookie(Controller *self, PyObject *args, PyObject *kwds) {
+  static char *kwlist[] = {"name", "value", "path", "domain", "secure", "httponly", "expired", "max_age", NULL};
+
   guava_response_t *resp = self->resp;
 
-  char *key;
-  char *value;
+  char *name = NULL;
+  char *value = NULL;
+  char *path = NULL;
+  char *domain = NULL;
+  int secure = GUAVA_FALSE;
+  int httponly = GUAVA_FALSE;
+  int expired = -1;
+  int max_age = -1;
 
-  if (!PyArg_ParseTuple(args, "ss", &key, &value)) {
-    PyErr_SetString(PyExc_TypeError, "give correct parameters");
+  if (!PyArg_ParseTupleAndKeywords(args,
+                                   kwds,
+                                   "ss|ssBBi",
+                                   kwlist,
+                                   &name,
+                                   &value,
+                                   &path,
+                                   &domain,
+                                   &secure,
+                                   &httponly,
+                                   &expired,
+                                   &max_age)) {
+
+    PyErr_SetString(PyExc_TypeError, "please give correct parameters");
     return NULL;
   }
 
-  guava_response_set_cookie(resp, key, value);
+  Cookie *cookie = (Cookie *)PyObject_New(Cookie, &CookieType);
+
+  if (name) {
+    guava_cookie_set_name(&cookie->data, name);
+  }
+  if (value) {
+    guava_cookie_set_value(&cookie->data, value);
+  }
+  if (path) {
+    guava_cookie_set_path(&cookie->data, path);
+  }
+  if (domain) {
+    guava_cookie_set_domain(&cookie->data, domain);
+  }
+  guava_cookie_set_secure(&cookie->data, secure);
+  guava_cookie_set_httponly(&cookie->data, httponly);
+  guava_cookie_set_expired(&cookie->data, expired);
+  guava_cookie_set_max_age(&cookie->data, max_age);
+
+  guava_response_set_cookie(resp, name, (PyObject *)cookie);
+
   Py_RETURN_TRUE;
 }
 

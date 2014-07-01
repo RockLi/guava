@@ -281,6 +281,38 @@ static int Request_set_POST(Request *self, PyObject *value, void *closure) {
   return 0;
 }
 
+static PyObject *Request_get_COOKIES(Request *self, void *closure) {
+  guava_request_t *req = self->req;
+  if (req->COOKIES) {
+    Py_INCREF(req->COOKIES);
+    return req->COOKIES;
+  }
+
+  Py_RETURN_NONE;
+}
+
+static int Request_set_COOKIES(Request *self, PyObject *value, void *closure) {
+  guava_request_t *req = self->req;
+  if (value == NULL)  {
+    PyErr_SetString(PyExc_TypeError, "Cannot delete the COOKIES attribute");
+    return -1;
+  }
+
+  if (!PyDict_Check(value)) {
+    PyErr_SetString(PyExc_TypeError, "The COOKIES attribute value must be a dict");
+    return -1;
+  }
+
+  if (req->COOKIES) {
+    Py_DECREF(req->COOKIES);
+  }
+
+  req->COOKIES = value;
+  Py_INCREF(value);
+
+  return 0;
+}
+
 static PyObject *Request_get_headers(Request *self, void *closure) {
   guava_request_t *req = self->req;
   Py_INCREF(req->headers);
@@ -350,6 +382,7 @@ static PyGetSetDef Request_getseter[] = {
   {"headers", (getter)Request_get_headers, (setter)Request_set_headers, "headers", NULL},
   {"GET", (getter)Request_get_GET, (setter)Request_set_GET, "GET", NULL},
   {"POST", (getter)Request_get_POST, (setter)Request_set_POST, "POST", NULL},
+  {"COOKIES", (getter)Request_get_COOKIES, (setter)Request_set_COOKIES, "COOKIES", NULL},
   {NULL}
 };
 

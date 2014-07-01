@@ -42,7 +42,7 @@ typedef uint8_t guava_bool_t;
 
 typedef struct {
   size_t len;
-  char data[0];
+  char   data[0];
 } guava_string_header_t;
 
 typedef char *guava_string_t;
@@ -61,97 +61,91 @@ typedef enum {
 } guava_session_store_type_t;
 
 typedef struct {
-  const char *name; /* session name passed to the client */
-  int gc_time; /* recycle the session item while exceeds this time in second */
-  int cookie_time; /* the cookie expired time */
-  const char *cookie_path;
-  const char *cookie_domain;
-  guava_bool_t cookie_secure;
-  guava_bool_t cookie_httponly;
+  const char                *name;            /* session name passed to the client */
+  int                        gc_time;         /* recycle the session item while exceeds this time in second */
+  int                        cookie_time;     /* the cookie expired time */
+  const char                *cookie_path;
+  const char                *cookie_domain;
+  guava_bool_t               cookie_secure;
+  guava_bool_t               cookie_httponly;
   guava_session_store_type_t type;
 } guava_session_store_t;
 
 typedef struct {
-  guava_router_type_t type;
-  guava_string_t mount_point;
-  guava_string_t package;
+  guava_router_type_t    type;
+  guava_string_t         mount_point;
+  guava_string_t         package;
   guava_session_store_t *session_store;
-  PyObject *routes; /* Special routes for overriding the default actions */
+  PyObject              *routes; /* Special routes for overriding the default actions */
 } guava_router_t;
 
 typedef struct {
-  uint32_t flags;
-  guava_string_t package;
-  guava_string_t module;
-  guava_string_t cls;
-  guava_string_t action;
+  uint32_t        flags;
+  guava_string_t  package;
+  guava_string_t  module;
+  guava_string_t  cls;
+  guava_string_t  action;
   guava_router_t *router;
-  PyObject *args;
+  PyObject       *args;
 } guava_handler_t;
 
 typedef struct {
-  uv_loop_t loop;
-  uv_tcp_t server;
-
-  uv_signal_t signal;
-
-  PyObject *routers;
+  uv_loop_t    loop;
+  uv_tcp_t     server;
+  uv_signal_t  signal;
+  PyObject    *routers;
 } guava_server_t;
 
 typedef struct {
-  uint16_t major;
-  uint16_t minor;
-
-  uint8_t method;
-
-  uint8_t keep_alive;
-
-  PyObject *headers;
-
-  guava_string_t url;
-  guava_string_t body;
-
-  guava_string_t path;
-  guava_string_t host;
-
-  PyObject *GET; /* Dict for storing the get parameters */
-  PyObject *POST; /* Dict for storing the post parameters */
+  uint16_t        major;
+  uint16_t        minor;
+  uint8_t         method;
+  uint8_t         keep_alive;
+  PyObject       *headers;
+  guava_string_t  url;
+  guava_string_t  body;
+  guava_string_t  path;
+  guava_string_t  host;
+  PyObject       *GET; /* Dict for storing the get parameters */
+  PyObject       *POST; /* Dict for storing the post parameters */
+  PyObject       *COOKIES;
 } guava_request_t;
 
 typedef struct {
-  uv_tcp_t stream;
-
-  http_parser parser;
-  http_parser_settings parser_settings;
-
-  uv_write_t write_req;
-
-  PyObject *request;
-
-  guava_server_t *server;
-
-  uint8_t keep_alive;
-
-  guava_string_t auxiliary_current_header;
-  uint8_t auxiliary_last_was_header;
+  uv_tcp_t              stream;
+  http_parser           parser;
+  http_parser_settings  parser_settings;
+  uv_write_t            write_req;
+  PyObject             *request;
+  guava_server_t       *server;
+  uint8_t               keep_alive;
+  guava_string_t        auxiliary_current_header;
+  uint8_t               auxiliary_last_was_header;
 } guava_conn_t;
 
 typedef struct {
-  uint16_t major;
-  uint16_t minor;
-  uint16_t status_code;
-
-  PyObject *headers;
-  PyObject *cookies;
-
-  guava_conn_t *conn;
-
-  guava_string_t data;
-
-  guava_string_t serialized_data;
+  uint16_t        major;
+  uint16_t        minor;
+  uint16_t        status_code;
+  PyObject       *headers;
+  PyObject       *cookies;
+  guava_conn_t   *conn;
+  guava_string_t  data;
+  guava_string_t  serialized_data;
 } guava_response_t;
 
-#ifndef PyMODINIT_FUNC  /* declarations for DLL import/export */
+typedef struct {
+  guava_string_t name;
+  guava_string_t value;
+  guava_string_t domain;
+  guava_string_t path;
+  int            expired;
+  int            max_age;
+  guava_bool_t   secure;
+  guava_bool_t   httponly;
+} guava_cookie_t;
+
+#ifndef PyMODINIT_FUNC
 #define PyMODINIT_FUNC void
 #endif
 

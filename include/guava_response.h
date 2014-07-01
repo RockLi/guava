@@ -21,7 +21,7 @@ void guava_response_set_status_code(guava_response_t *resp, uint16_t status_code
 
 void guava_response_set_header(guava_response_t *resp, const char *key, const char *value);
 
-void guava_response_set_cookie(guava_response_t *resp, const char *key, const char *value);
+void guava_response_set_cookie(guava_response_t *resp, const char *key, PyObject *value);
 
 void guava_response_set_data(guava_response_t *resp, guava_string_t data);
 

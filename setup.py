@@ -16,8 +16,9 @@ guava_sources =[ SRC_FOLDER + name for name in [
     'guava_server.c',
     'guava_string.c',
     'guava_session/guava_session.c',
-	'guava_session/guava_session_store_inmem.c',
-	'guava_session/guava_session_store_file.c',
+    'guava_session/guava_session_store_inmem.c',
+    'guava_session/guava_session_store_file.c',
+    'guava_cookie.c'
 ]]
 
 http_parser_include = ['deps/http-parser']
@@ -35,8 +36,9 @@ guava_module = Extension('guava',
                              SRC_FOLDER + 'guava_module/guava_module_router_static.c',
                              SRC_FOLDER + 'guava_module/guava_module_router_mvc.c',
                              SRC_FOLDER + 'guava_module/guava_module_router_rest.c',
-							 SRC_FOLDER + 'guava_module/guava_module_session.c',
-                             SRC_FOLDER + 'guava_module/guava_module.c'
+                             SRC_FOLDER + 'guava_module/guava_module_session.c',
+                             SRC_FOLDER + 'guava_module/guava_module.c',
+                             SRC_FOLDER + 'guava_module/guava_module_cookie.c',
                          ],
                          include_dirs=['./include/'] + http_parser_include,
                          library_dirs = [],

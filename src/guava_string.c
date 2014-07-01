@@ -65,6 +65,12 @@ guava_string_t guava_string_append_raw_size(const guava_string_t gs, const char 
   return h->data;
 }
 
+guava_string_t guava_string_append_int(const guava_string_t gs, int i) {
+  char buf[128] = {0};
+  snprintf(buf, sizeof(buf), "%d", i);
+  return guava_string_append_raw(gs, buf);
+}
+
 guava_bool_t guava_string_starts_with(const guava_string_t s1, const guava_string_t s2) {
   if (strstr(s1, s2)) {
     return GUAVA_TRUE;

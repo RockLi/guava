@@ -9,6 +9,4 @@ void guava_lazy_pyobj_free(guava_lazy_pyobj_t *lazy_obj);
 
 guava_bool_t guava_lazy_pyobj_parsed(guava_lazy_pyobj_t *lazy_obj);
 
-
-
 #endif /* !__GUAVA_LAZY_H__ */

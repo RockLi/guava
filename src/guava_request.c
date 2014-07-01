@@ -14,6 +14,7 @@
 #include "guava_mime_type.h"
 #include "guava_module.h"
 #include "guava_session/guava_session.h"
+#include "guava_cookie.h"
 
 static guava_request_method_t guava_request_methods[] = {
   {0, "DELETE"},
@@ -81,6 +82,15 @@ guava_request_t *guava_request_new(void) {
   if (!req->POST) {
     Py_DECREF(req->headers);
     Py_DECREF(req->GET);
+    free(req);
+    return NULL;
+  }
+
+  req->COOKIES = PyDict_New();
+  if (!req->COOKIES) {
+    Py_DECREF(req->headers);
+    Py_DECREF(req->GET);
+    Py_DECREF(req->POST);
     free(req);
     return NULL;
   }
@@ -261,7 +271,13 @@ int guava_request_on_headers_complete(http_parser *parser) {
 
   PyObject *cookie = PyDict_GetItemString(request->req->headers, "Cookie");
   if (cookie) {
-    /* @Todo: parse the cookies here */
+    char *p = PyString_AsString(cookie);
+    char **data = (char **)&p;
+    Cookie *c = NULL;
+
+    while ((c = (Cookie *)guava_cookie_parse(data))) {
+      PyDict_SetItemString(request->req->COOKIES, c->data.name, (PyObject *)c);
+    }
   }
 
   return 0;
@@ -304,8 +320,6 @@ int guava_request_on_message_complete(http_parser *parser) {
 
   Py_ssize_t nrouters = PyList_Size(server->routers);
 
-  /* Get the best matched router */
-
   router = (Router *)guava_router_get_best_matched_router((PyObject *)server->routers, (PyObject *)request);
   if (router) {
     handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
@@ -315,7 +329,7 @@ int guava_request_on_message_complete(http_parser *parser) {
   for (Py_ssize_t i = 0; i < nrouters; ++i) {
     router = (Router *)PyList_GetItem(server->routers, i);
     if (router->router->type != GUAVA_ROUTER_CUSTOM) {
-      /* 
+      /*
        * Cause we already try to get the best matched router
        * But we still need to pass the custome router in case use defined some speciall routes
        */
@@ -392,7 +406,11 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     Py_DECREF(cls);
     c->resp = resp;
+    /* c->req = request; */
     c->router = handler->handler->router;
+
+    PyObject_Print((PyObject *)request->req->COOKIES, stderr, 0);
+
 
     if (!PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL)) {
       Py_DECREF(c);

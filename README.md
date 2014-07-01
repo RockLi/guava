@@ -1,20 +1,22 @@
 # Guava [![Build Status](https://travis-ci.org/flatpeach/guava.svg)](https://travis-ci.org/flatpeach/guava)
 
-Guava is a super lightweight high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. keep in mind, this project is not just revent the wheel. 
+Guava is a super lightweight high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. keep in mind, this project is not just revent the wheel.
 
 If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to write your own web framework!
 
 
-I wrote an article to explain why I developer the guava framework. [Link here](http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/), please have a look at that article, because this README.md maybe a little bit of outdated.
+I wrote an article to explain the design of the guava framework.
+
+[Link here](http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/), please try to read that article, because this README.md maybe a little bit outdated.
 
 
 ## Status of this Project
 
 Still under highly active development. The git repo is treated as **Preview Version**. So donot use it for production now.
 
-I will release the stable version ASAP. 
+I will release the stable version ASAP.
 
-Anyways, you can evaluate it, hack it in advance. If you want to contribute, please see the contribution section. 
+Anyways, you can evaluate it, hack it in advance. If you want to contribute, please see the contribution section.
 
 
 ## Philosophy of Guava
@@ -48,9 +50,9 @@ For the detailed story and design of the Guava project, please go to [my blog](h
 ------------                                ----------------------
 ```
 
-### No Nginx/Apache 
+### No Nginx/Apache
 
-The performance of the Guava builtin web server is good enough for serving as the standalone web server. But till now I haven't spend so much time on the security part, so maybe it's not the best time to choose this kind of deployment. 
+The performance of the Guava builtin web server is good enough for serving as the standalone web server. But till now I haven't spend so much time on the security part, so maybe it's not the best time to choose this kind of deployment.
 
 
 ## Router
@@ -66,8 +68,8 @@ StaticRouter is dedicated for serving static resources, for example: css, javasc
 
 
 ```
-static_router = guava.router.StaticRouter(mount_point="/static", 
-                                          directory="my_static_dir", 
+static_router = guava.router.StaticRouter(mount_point="/static",
+                                          directory="my_static_dir",
                                           allow_index=True)
 ```
 
@@ -107,9 +109,9 @@ If above routers can not match all of your requirements, you can use CustomRoute
 
 ```
 custom_router = guava.router.Router({
-	"/about": guava.handler.Handler(package='.', 
+	"/about": guava.handler.Handler(package='.',
                                     module='misc',
-                                    controller='MiscController', 
+                                    controller='MiscController',
                                     action='about')
 })
 ```
@@ -119,7 +121,7 @@ custom_router = guava.router.Router({
 class MySpecialRouter(guava.router.Router):
 
     def __init__(self):
-		self.register('/hello', 
+		self.register('/hello',
 		              guava.handler.Handler(package='.',
                                             module='misc',
                                             controller='MiscController',
@@ -139,7 +141,7 @@ class MySpecialRouter(guava.router.Router):
 
 ## Controller
 
-All your controllers should inherit from ```guava.controller.Controller```. 
+All your controllers should inherit from ```guava.controller.Controller```.
 
 
 
@@ -149,7 +151,7 @@ Guava already builtin two kinds of Session store solutions, one is in memory sto
 
 ### InMemory Store
 
-This is specially useful for debugging purpose. Each time you restarted the guava web server, all data in this kind of session store will be dropped. 
+This is specially useful for debugging purpose. Each time you restarted the guava web server, all data in this kind of session store will be dropped.
 
 ```
 session_store = guava.session.SessionStore(type=guava.session.Mem)
@@ -165,7 +167,7 @@ session_store = guava.session.SessionStore(type=guava.session.File)
 
 ### Custom the Session Store
 
-If you want to implement the SSO, you need the central based session storage solution by using Redis, memcache, database or other brokers to store the session data. 
+If you want to implement the SSO, you need the central based session storage solution by using Redis, memcache, database or other brokers to store the session data.
 
 ```
 class RedisSessionStore(guava.session.SessionStore):
@@ -192,7 +194,7 @@ You need to implement the four placeholder functions to build your own session s
 
 ## Dependencies
 
-Project | Description 
+Project | Description
 ----- | --------------------------------------
 libuv | Cross-platform asychronous I/O library
 http-parser | http request/response parser for c
@@ -214,16 +216,16 @@ http-parser | http request/response parser for c
 
 ## Performance
 
-I will give out the performance result in my blog, will update this document afterwards. 
+I will give out the performance result in my blog, will update this document afterwards.
 
 
 ## Contributions
 
-To me, all kinds of contributions are welcome. 
+To me, all kinds of contributions are welcome.
 
 1. Contribute to the core codes
 2. Testcases
-3. Examples 
+3. Examples
 4. Documentation
 5. Website or the Logo for the Guava project
 6. Even request for new features!

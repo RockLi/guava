@@ -26,11 +26,14 @@ guava_string_t guava_string_append_raw(const guava_string_t gs, const char *s);
 
 guava_string_t guava_string_append_raw_size(const guava_string_t gs, const char *s, size_t len);
 
+guava_string_t guava_string_append_int(const guava_string_t gs, int i);
+
 guava_bool_t guava_string_starts_with(const guava_string_t s1, const guava_string_t s2);
 
 guava_bool_t guava_string_equal_raw(const guava_string_t s, const char *s2);
 
 size_t guava_string_common_string_count_from_start(const guava_string_t s, const guava_string_t s2);
+
 
 void guava_string_free(const guava_string_t gs);
 

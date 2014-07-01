@@ -11,9 +11,8 @@
 
 typedef struct {
   guava_router_t route;
-
   guava_string_t directory;
-  guava_bool_t allow_index;
+  guava_bool_t   allow_index;
 } guava_router_static_t;
 
 typedef struct {
@@ -25,8 +24,8 @@ typedef struct {
 } guava_router_rest_t;
 
 typedef struct {
-  guava_router_t route;
-  PyObject *routes;
+  guava_router_t  route;
+  PyObject       *routes;
 } guava_router_custom_t;
 
 guava_router_t *guava_router_new(void);

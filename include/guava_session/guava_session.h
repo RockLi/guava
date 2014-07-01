@@ -18,15 +18,13 @@
 #define GUAVA_SESSION_DEFAULT_COOKIE_HTTPONLY GUAVA_FALSE
 
 typedef struct {
-  guava_session_store_t store;
-
-  PyObject *items; /* Dict for storing key-value data  */
+  guava_session_store_t  store;
+  PyObject              *items; /* Dict for storing key-value data  */
 } guava_session_store_inmem_t;
 
 typedef struct {
   guava_session_store_t store;
-
-  guava_string_t path;
+  guava_string_t        path;
 } guava_session_store_file_t;
 
 typedef guava_string_t guava_session_id_t;

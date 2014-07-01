@@ -66,13 +66,12 @@ void guava_response_set_header(guava_response_t *resp, const char *key, const ch
   Py_DECREF(v);
 }
 
-void guava_response_set_cookie(guava_response_t *resp, const char *key, const char *value) {
+void guava_response_set_cookie(guava_response_t *resp, const char *key, PyObject *value) {
   if (!resp->cookies) {
     resp->cookies = PyDict_New();
   }
-  PyObject *v = PyString_FromString(value);
-  PyDict_SetItemString(resp->cookies, key, v);
-  Py_DECREF(v);
+
+  PyDict_SetItemString(resp->cookies, key, value);
 }
 
 void guava_response_set_data(guava_response_t *resp, guava_string_t data) {
@@ -107,20 +106,41 @@ guava_string_t guava_response_serialize(guava_response_t *resp) {
   Py_DECREF(kkey);
 
   kkey = PyString_FromString("Set-Cookie");
-  Py_ssize_t cookies_count = 0;
-  if (!PyDict_Contains(resp->headers, kkey) && resp->cookies && (cookies_count = PyDict_Size(resp->cookies)) > 0) {
-    s = guava_string_append_raw(s, "Set-Cookie: ");
-    PyObject *cookie_key = NULL, *cookie_value = NULL;
-    Py_ssize_t cookie_pos = 0, idx = 0;
+  if (!PyDict_Contains(resp->headers, kkey) && resp->cookies) {
+    PyObject *cookie_key = NULL;
+    PyObject *cookie_value = NULL;
+    Cookie *cookie = NULL;
+    Py_ssize_t cookie_pos = 0;
     while (PyDict_Next(resp->cookies, &cookie_pos, &cookie_key, &cookie_value)) {
-      s = guava_string_append_raw(s, PyString_AsString(cookie_key));
+      cookie = (Cookie *)cookie_value;
+      s = guava_string_append_raw(s, "Set-Cookie: ");
+      s = guava_string_append_raw(s, cookie->data.name);
       s = guava_string_append_raw(s, "=");
-      s = guava_string_append_raw(s, PyString_AsString(cookie_value));
-      if (idx++ != cookies_count - 1) {
-        s = guava_string_append_raw(s, "; ");
+      s = guava_string_append_raw(s, cookie->data.value);
+      if (cookie->data.domain) {
+        s = guava_string_append_raw(s, " ;Domain=");
+        s = guava_string_append_raw(s, cookie->data.domain);
       }
+      if (cookie->data.path) {
+        s = guava_string_append_raw(s, " ;Path=");
+        s = guava_string_append_raw(s, cookie->data.path);
+      }
+      if (cookie->data.expired >= 0) {
+        s = guava_string_append_raw(s, " ;Expires=");
+        s = guava_string_append_int(s, cookie->data.expired);
+      }
+      if (cookie->data.max_age >= 0) {
+        s = guava_string_append_raw(s, " ;Max-Age=");
+        s = guava_string_append_int(s, cookie->data.max_age);
+      }
+      if (cookie->data.secure) {
+        s = guava_string_append_raw(s, " ;Secure");
+      }
+      if (cookie->data.httponly) {
+        s = guava_string_append_raw(s, " ;HttpOnly");
+      }
+      s = guava_string_append_raw(s, "\r\n");
     }
-    s = guava_string_append_raw(s, "\r\n");
   }
   Py_DECREF(kkey);
 

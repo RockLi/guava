@@ -52,11 +52,20 @@ typedef struct {
   PyObject_HEAD
 
   guava_response_t *resp;
-  PyObject *owned_resp;
+  PyObject         *owned_resp;
 
-  PyObject *SESSION;
-  guava_router_t *router;
+  /* guava_request_t  *req; */
+  /* PyObject         *owned_req; */
+
+  PyObject         *SESSION;
+  guava_router_t   *router;
 } Controller;
+
+typedef struct {
+  PyObject_HEAD
+
+  guava_cookie_t data;
+} Cookie;
 
 extern PyTypeObject HandlerType;
 
@@ -65,6 +74,8 @@ extern PyTypeObject RouterType;
 extern PyTypeObject RequestType;
 
 extern PyTypeObject ControllerType;
+
+extern PyTypeObject CookieType;
 
 extern PyObject *Handler_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 

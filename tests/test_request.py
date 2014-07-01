@@ -59,6 +59,15 @@ class TestRequest(unittest.TestCase):
         self.req.POST = {'a': 'b'}
         self.assertEqual(self.req.POST, {'a': 'b'})
 
+    def test_COOKIES_getset(self):
+        self.assertEqual(self.req.COOKIES, {})
+
+        self.req.COOKIES['key'] = 'value'
+        self.assertEqual(self.req.COOKIES['key'], 'value')
+
+        self.req.COOKIES = {'a': 'b'}
+        self.assertEqual(self.req.COOKIES, {'a': 'b'})
+
     def test_headers_getset(self):
         self.assertEqual(self.req.headers, {})
 
