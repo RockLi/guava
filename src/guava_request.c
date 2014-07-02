@@ -179,8 +179,6 @@ void guava_request_extract_from_url(guava_request_t *req) {
     req->path = guava_string_new(req->url);
   } else {
     req->path = guava_string_new_size(req->url, ptr - (char *)req->url);
-    /* Set the GET parameters */
-
     ptr += 1;
     if (ptr != NULL) {
       char *and_ptr = strchr(ptr, '&');
@@ -409,7 +407,7 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     Py_DECREF(cls);
     c->resp = resp;
-    /* c->req = request; */
+    c->req = ((Request *)conn->request)->req;
     c->router = handler->handler->router;
 
     if (!PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL)) {
@@ -422,16 +420,18 @@ int guava_request_on_message_complete(http_parser *parser) {
     }
 
     if (handler->handler->router->session_store && c->SESSION) {
-      /* save the session after we executed the user action */
       guava_request_t *r = ((Request *)conn->request)->req;
+
       PyObject *sid_cookie = PyDict_GetItemString(r->COOKIES, handler->handler->router->session_store->name);
+
       guava_session_id_t sid = NULL;
+
       if (sid) {
         sid = guava_string_new(((Cookie *)sid_cookie)->data.value);
       } else {
         sid = guava_session_new_id();
       }
-      fprintf(stderr, "sid: %s\n", sid);
+
       guava_session_set(handler->handler->router->session_store, sid, c->SESSION);
     }
 

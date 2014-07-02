@@ -200,23 +200,19 @@ libuv | Cross-platform asychronous I/O library
 http-parser | http request/response parser for c
 
 
-
 ## Install
 
 ### Install from Git
 
 ```git submodule update --init```
 
-```cd deps/libuv; ./build.sh; ./configure; make; sudo make install```
+```sudo ./build.sh```
 
-```cd deps/http-parser; make```
-
-```sudo python setup.py install```
-
+Run tests: ```python -m unittest discover```
 
 ## Performance
 
-I will give out the performance result in my blog, will update this document afterwards.
+Please see my blog.
 
 
 ## Contributions

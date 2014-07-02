@@ -20,14 +20,16 @@ class TestController(unittest.TestCase):
     def test_controller(self):
         c = MyController()
 
-        self.assertTrue(c.header != None)
+        self.assertTrue(c.set_header != None)
         self.assertTrue(c.write != None)
-        self.assertTrue(c.status_code != None)
+        self.assertTrue(c.set_status_code != None)
         self.assertTrue(c.redirect != None)
         self.assertTrue(c.hook_before_action != None)
         self.assertTrue(c.hook_after_action != None)
-        self.assertTrue(c.cookie != None)
+        self.assertTrue(c.set_cookie != None)
+
+        self.assertEqual(c.GET, {})
 
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()

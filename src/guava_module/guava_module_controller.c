@@ -17,6 +17,8 @@ static PyObject *Controller_new(PyTypeObject *type, PyObject *args, PyObject *kw
   if (self) {
     self->resp = NULL;
     self->owned_resp = NULL;
+    self->req = NULL;
+    self->owned_req = NULL;
     self->SESSION = NULL;
   }
 
@@ -28,8 +30,13 @@ static void Controller_dealloc(Controller *self) {
     Py_DECREF(self->owned_resp);
     self->owned_resp = NULL;
   }
-
   self->resp = NULL;
+
+  if (self->owned_req) {
+    Py_DECREF(self->owned_req);
+    self->owned_req = NULL;
+  }
+  self->req = NULL;
 
   if (self->SESSION) {
     Py_DECREF(self->SESSION);
@@ -41,7 +48,8 @@ static void Controller_dealloc(Controller *self) {
 
 static int Controller_init(Controller *self, PyObject *args, PyObject *kwds) {
   PyObject *resp = NULL;
-  if (!PyArg_ParseTuple(args, "|O", &resp)) {
+  PyObject *req = NULL;
+  if (!PyArg_ParseTuple(args, "|OO", &resp, &req)) {
     return -1;
   }
 
@@ -50,11 +58,18 @@ static int Controller_init(Controller *self, PyObject *args, PyObject *kwds) {
     self->resp = ((Response *)resp)->resp;
     self->owned_resp = resp;
   }
+
+  if (req) {
+    Py_INCREF(req);
+    self->req = ((Request *)req)->req;
+    self->owned_req = req;
+  }
+
   self->SESSION = NULL;
   return 0;
 }
 
-static PyObject *Controller_header(Controller *self, PyObject *args) {
+static PyObject *Controller_set_header(Controller *self, PyObject *args) {
   guava_response_t *resp = self->resp;
 
   char *key;
@@ -69,7 +84,7 @@ static PyObject *Controller_header(Controller *self, PyObject *args) {
   Py_RETURN_TRUE;
 }
 
-static PyObject *Controller_cookie(Controller *self, PyObject *args, PyObject *kwds) {
+static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObject *kwds) {
   static char *kwlist[] = {"name", "value", "path", "domain", "secure", "httponly", "expired", "max_age", NULL};
 
   guava_response_t *resp = self->resp;
@@ -131,7 +146,7 @@ static PyObject *Controller_write(Controller *self, PyObject *args) {
   Py_RETURN_TRUE;
 }
 
-static PyObject *Controller_status_code(Controller *self, PyObject *args) {
+static PyObject *Controller_set_status_code(Controller *self, PyObject *args) {
   guava_response_t *resp = self->resp;
 
   int status_code;
@@ -180,30 +195,52 @@ static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
   return self->SESSION;
 }
 
-static PyObject *Controller_headers(Controller *self, void *closure) {
-  guava_response_t *resp = self->resp;
-  if (resp->headers == NULL) {
-    resp->headers = PyDict_New();
+static PyObject *Controller_get_GET(Controller *self, void *closure) {
+  if (!self->req) {
+    return PyDict_New();
   }
 
-  Py_INCREF(resp->headers);
-
-  return resp->headers;
-}
-
-static PyObject *Controller_cookies(Controller *self, void *closure) {
-  guava_response_t *resp = self->resp;
-  if (resp->cookies == NULL) {
-    resp->cookies = PyDict_New();
+  if (!self->req->GET) {
+    self->req->GET = PyDict_New();
   }
 
-  Py_INCREF(resp->cookies);
+  Py_INCREF(self->req->GET);
 
-  return resp->cookies;
+  return self->req->GET;
 }
 
+static PyObject *Controller_get_POST(Controller *self, void *closure) {
+  if (!self->req) {
+    return PyDict_New();
+  }
+
+  if (!self->req->POST) {
+    self->req->POST = PyDict_New();
+  }
+
+  Py_INCREF(self->req->POST);
+
+  return self->req->POST;
+}
+
+static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
+  if (!self->req) {
+    return PyDict_New();
+  }
+
+  if (!self->req->COOKIES) {
+    self->req->COOKIES = PyDict_New();
+  }
+
+  Py_INCREF(self->req->COOKIES);
+
+  return self->req->COOKIES;
+}
 
 static PyGetSetDef Controller_getseter[] = {
+  {"COOKIES", (getter)Controller_get_COOKIES, NULL, "COOKIES", NULL},
+  {"GET", (getter)Controller_get_GET, NULL, "GET", NULL},
+  {"POST", (getter)Controller_get_POST, NULL, "POST", NULL},
   {"SESSION", (getter)Controller_get_SESSION, NULL, "SESSION", NULL},
   {NULL}
 };
@@ -213,12 +250,10 @@ static PyMemberDef Controller_members[] = {
 };
 
 static PyMethodDef Controller_methods[] = {
-  {"header", (PyCFunction)Controller_header, METH_VARARGS, "set the response header"},
-  {"headers", (PyCFunction)Controller_headers, METH_VARARGS, "get all setted headers"},
-  {"cookie", (PyCFunction)Controller_cookie, METH_VARARGS, "set the cookie"},
-  {"cookies", (PyCFunction)Controller_cookies, METH_VARARGS, "get all setted cookies"},
+  {"set_header", (PyCFunction)Controller_set_header, METH_VARARGS, "set the response header"},
+  {"set_cookie", (PyCFunction)Controller_set_cookie, METH_VARARGS, "set the response cookie"},
   {"write", (PyCFunction)Controller_write, METH_VARARGS, "write the data to client"},
-  {"status_code", (PyCFunction)Controller_status_code, METH_VARARGS, "set the response status code"},
+  {"set_status_code", (PyCFunction)Controller_set_status_code, METH_VARARGS, "set the response status code"},
   {"redirect", (PyCFunction)Controller_redirect, METH_VARARGS, "redirect to another url"},
   /* begin hooks definition */
   {"hook_before_action", (PyCFunction)Controller_hook_before_action, METH_NOARGS, ""},
