@@ -177,13 +177,23 @@ static PyObject *Controller_hook_after_action(Controller *self, PyObject *args) 
 static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
   if (self->SESSION == NULL) {
     if (self->router->session_store) {
-      const char *id = "111111"; /* @Todo: lazy*/
-      PyObject *v = guava_session_get(self->router->session_store, (guava_session_id_t)id);
+      Cookie *id = NULL;
+      PyObject *v = Py_None;
+
+      if (self->req && self->req->COOKIES) {
+        id = (Cookie *)PyDict_GetItemString(self->req->COOKIES, self->router->session_store->name);
+      }
+
+      if (id) {
+        v = guava_session_get(self->router->session_store, (guava_session_id_t)id->data.value);
+      }
+
       if (v == Py_None) {
         self->SESSION = PyDict_New();
       } else {
         self->SESSION = v;
       }
+
     } else {
       PyErr_SetString(PyExc_TypeError, "you didn't enable the session for this router");
       return NULL;
