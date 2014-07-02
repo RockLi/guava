@@ -28,6 +28,8 @@ guava_sources =[ SRC_FOLDER + name for name in [
 http_parser_include = ['deps/http-parser']
 http_parser_files = ['deps/http-parser/http_parser.c']
 
+libuv_include = ['deps/libuv/include']
+
 compile_flags = ['-O0', '-ggdb', '-std=c99']
 
 if OS == 'Linux':
@@ -49,7 +51,7 @@ guava_module = Extension('guava',
                              SRC_FOLDER + 'guava_module/guava_module.c',
                              SRC_FOLDER + 'guava_module/guava_module_cookie.c',
                          ],
-                         include_dirs=['./include/'] + http_parser_include,
+                         include_dirs=['./include/'] + http_parser_include + libuv_include,
                          libraries=[] + libraries,
                          define_macros=[('HTTP_PARSER_STRICT', 1)],
                          extra_compile_args=compile_flags,
