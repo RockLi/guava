@@ -54,8 +54,8 @@ typedef struct {
   guava_response_t *resp;
   PyObject         *owned_resp;
 
-  /* guava_request_t  *req; */
-  /* PyObject         *owned_req; */
+  guava_request_t  *req;
+  PyObject         *owned_req;
 
   PyObject         *SESSION;
   guava_router_t   *router;

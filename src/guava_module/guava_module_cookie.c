@@ -20,6 +20,18 @@ PyObject *Cookie_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
 }
 
 static void Cookie_dealloc(Cookie *self) {
+  if (self->data.name) {
+    guava_string_free(self->data.name);
+  }
+  if (self->data.value) {
+    guava_string_free(self->data.value);
+  }
+  if (self->data.path) {
+    guava_string_free(self->data.path);
+  }
+  if (self->data.domain) {
+    guava_string_free(self->data.domain);
+  }
   self->ob_type->tp_free((PyObject *)self);
 }
 

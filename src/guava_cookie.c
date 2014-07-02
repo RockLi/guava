@@ -1,6 +1,43 @@
+/*
+ * Copyright 2014 The guava Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
+ */
+
 #include "guava_cookie.h"
 #include "guava_string.h"
 #include "guava_module.h"
+
+PyObject *guava_cookie_new_object(const char  *name,
+                                  const char  *value,
+                                  const char  *path,
+                                  const char  *domain,
+                                  int          expired,
+                                  int          max_age,
+                                  guava_bool_t secure,
+                                  guava_bool_t httponly) {
+  Cookie *cookie = (Cookie *)PyObject_New(Cookie, &CookieType);
+  memset(&cookie->data, 0, sizeof(cookie->data));
+
+  if (name) {
+    guava_cookie_set_name(&cookie->data, name);
+  }
+  if (value) {
+    guava_cookie_set_value(&cookie->data, value);
+  }
+  if (path) {
+    guava_cookie_set_path(&cookie->data, path);
+  }
+  if (domain) {
+    guava_cookie_set_domain(&cookie->data, domain);
+  }
+  guava_cookie_set_secure(&cookie->data, secure);
+  guava_cookie_set_httponly(&cookie->data, httponly);
+  guava_cookie_set_expired(&cookie->data, expired);
+  guava_cookie_set_max_age(&cookie->data, max_age);
+
+  return (PyObject *)cookie;
+}
 
 guava_cookie_t *guava_cookie_new() {
   guava_cookie_t *cookie = (guava_cookie_t *)malloc(sizeof(*cookie));
@@ -192,8 +229,6 @@ PyObject *guava_cookie_parse(char **data) {
 
   name = guava_string_new_size(name_start, name_end - name_start);
   value = guava_string_new_size(value_start, value_end - value_start);
-  fprintf(stderr, "name: %s\n", name);
-  fprintf(stderr, "value: %s\n", value);
 
   cookie = PyObject_New(Cookie, &CookieType);
   guava_cookie_set_name(&cookie->data, name);

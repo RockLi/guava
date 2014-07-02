@@ -4,13 +4,8 @@ python:
     - 2.7
 
 before_install:
-  - git submodule update --init --recursive
   - sudo apt-get install python-dev
 
-install:
-  - cd deps/libuv && sh ./autogen.sh && ./configure && make && sudo make install
-  - sudo ldconfig
-  - cd ../../
-  - python setup.py install
+install: ./build.sh
 
 script: python -m unittest discover

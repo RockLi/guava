@@ -1,7 +1,22 @@
+/*
+ * Copyright 2014 The guava Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
+ */
+
 #ifndef __GUAVA_COOKIE_H__
 #define __GUAVA_COOKIE_H__
 
 #include "guava.h"
+
+PyObject *guava_cookie_new_object(const char  *name,
+                                  const char  *value,
+                                  const char  *path,
+                                  const char  *domain,
+                                  int          expired,
+                                  int          max_age,
+                                  guava_bool_t secure,
+                                  guava_bool_t httponly);
 
 guava_cookie_t *guava_cookie_new(void);
 

@@ -134,6 +134,11 @@ void guava_request_free(guava_request_t *req) {
     req->POST = NULL;
   }
 
+  if (req->COOKIES) {
+    Py_DECREF(req->COOKIES);
+    req->COOKIES = NULL;
+  }
+
   free(req);
 }
 
@@ -178,8 +183,6 @@ void guava_request_extract_from_url(guava_request_t *req) {
 
     ptr += 1;
     if (ptr != NULL) {
-      /* @todo: set the request here */
-
       char *and_ptr = strchr(ptr, '&');
       char *equal_ptr = NULL;
 
@@ -409,9 +412,6 @@ int guava_request_on_message_complete(http_parser *parser) {
     /* c->req = request; */
     c->router = handler->handler->router;
 
-    PyObject_Print((PyObject *)request->req->COOKIES, stderr, 0);
-
-
     if (!PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL)) {
       Py_DECREF(c);
       PyErr_Print();
@@ -423,8 +423,16 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     if (handler->handler->router->session_store && c->SESSION) {
       /* save the session after we executed the user action */
-      const char *id = "111111"; /* @todo: fix the sessionid */
-      guava_session_set(handler->handler->router->session_store, (guava_session_id_t)id, c->SESSION);
+      guava_request_t *r = ((Request *)conn->request)->req;
+      PyObject *sid_cookie = PyDict_GetItemString(r->COOKIES, handler->handler->router->session_store->name);
+      guava_session_id_t sid = NULL;
+      if (sid) {
+        sid = guava_string_new(((Cookie *)sid_cookie)->data.value);
+      } else {
+        sid = guava_session_new_id();
+      }
+      fprintf(stderr, "sid: %s\n", sid);
+      guava_session_set(handler->handler->router->session_store, sid, c->SESSION);
     }
 
     Py_DECREF(c);

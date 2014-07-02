@@ -100,26 +100,19 @@ static PyObject *Controller_cookie(Controller *self, PyObject *args, PyObject *k
     return NULL;
   }
 
-  Cookie *cookie = (Cookie *)PyObject_New(Cookie, &CookieType);
+  PyObject *cookie = guava_cookie_new_object(name,
+                                             value,
+                                             path,
+                                             domain,
+                                             expired,
+                                             max_age,
+                                             secure,
+                                             httponly);
 
-  if (name) {
-    guava_cookie_set_name(&cookie->data, name);
-  }
-  if (value) {
-    guava_cookie_set_value(&cookie->data, value);
-  }
-  if (path) {
-    guava_cookie_set_path(&cookie->data, path);
-  }
-  if (domain) {
-    guava_cookie_set_domain(&cookie->data, domain);
-  }
-  guava_cookie_set_secure(&cookie->data, secure);
-  guava_cookie_set_httponly(&cookie->data, httponly);
-  guava_cookie_set_expired(&cookie->data, expired);
-  guava_cookie_set_max_age(&cookie->data, max_age);
 
   guava_response_set_cookie(resp, name, (PyObject *)cookie);
+
+  Py_DECREF(cookie);
 
   Py_RETURN_TRUE;
 }
@@ -170,7 +163,6 @@ static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
   if (self->SESSION == NULL) {
     if (self->router->session_store) {
       const char *id = "111111"; /* @Todo: lazy*/
-
       PyObject *v = guava_session_get(self->router->session_store, (guava_session_id_t)id);
       if (v == Py_None) {
         self->SESSION = PyDict_New();
