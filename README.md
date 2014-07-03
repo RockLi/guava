@@ -210,6 +210,18 @@ http-parser | http request/response parser for c
 
 Run tests: ```python -m unittest discover```
 
+
+## Quick Usage Tricks
+
+1. Launch a web server at current directory
+
+```python -c 'import guava;guava.server.start_static_server(".")'```
+
+It's the same as
+
+```python -m SimpleHTTPServer```
+
+
 ## Performance
 
 Please see my blog.

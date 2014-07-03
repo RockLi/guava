@@ -319,35 +319,40 @@ int guava_request_on_message_complete(http_parser *parser) {
   Router *router = NULL;
   Handler *handler = NULL;
 
-  Py_ssize_t nrouters = PyList_Size(server->routers);
-
-  router = (Router *)guava_router_get_best_matched_router((PyObject *)server->routers, (PyObject *)request);
-  if (router) {
-    handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
-    handler->handler->router = router->router;
-  }
-
-  for (Py_ssize_t i = 0; i < nrouters; ++i) {
-    router = (Router *)PyList_GetItem(server->routers, i);
-    if (router->router->type != GUAVA_ROUTER_CUSTOM) {
-      /*
-       * Cause we already try to get the best matched router
-       * But we still need to pass the custome router in case use defined some speciall routes
-       */
-      continue;
-    }
-    Handler *h = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
-    if ((PyObject *)h != Py_None) {
-      handler = h;
-      handler->handler->router = router->router;
-      break;
-    }
-  }
-
   guava_response_t *resp = guava_response_new();
   guava_response_set_conn(resp, conn);
 
+  Py_ssize_t nrouters = PyList_Size(server->routers);
+
   do {
+    router = (Router *)guava_router_get_best_matched_router((PyObject *)server->routers, (PyObject *)request);
+    if (router) {
+      if (router->router->type == GUAVA_ROUTER_STATIC) {
+        guava_handler_static(router->router, conn, ((Request *)conn->request)->req, resp, on_write, on_sendfile);
+        break;
+      } else {
+        handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
+        handler->handler->router = router->router;
+      }
+    }
+
+    for (Py_ssize_t i = 0; i < nrouters; ++i) {
+      router = (Router *)PyList_GetItem(server->routers, i);
+      if (router->router->type != GUAVA_ROUTER_CUSTOM) {
+        /*
+         * Cause we already try to get the best matched router
+         * But we still need to pass the custome router in case use defined some speciall routes
+         */
+        continue;
+      }
+      Handler *h = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
+      if ((PyObject *)h != Py_None) {
+        handler = h;
+        handler->handler->router = router->router;
+        break;
+      }
+    }
+
     if (!guava_handler_is_valid(handler->handler) || handler->handler->flags & GUAVA_HANDLER_404) {
       guava_response_404(resp, NULL);
       guava_response_send(resp, on_write);

@@ -7,6 +7,8 @@
 #include "guava.h"
 #include "guava_server.h"
 #include "guava_module.h"
+#include "guava_router/guava_router.h"
+#include "guava_module_router.h"
 
 typedef struct {
   PyObject_HEAD
@@ -146,7 +148,37 @@ static PyTypeObject ServerType = {
   Server_new,                 /* tp_new */
 };
 
+
+static PyObject *server_start_static_server(PyObject *self, PyObject *args, PyObject *kwds) {
+  char *path = ".";
+  guava_bool_t allow_index = GUAVA_TRUE;
+
+  if (!PyArg_ParseTupleAndKeywords(args,
+                                   kwds,
+                                   "|sB",
+                                   &path,
+                                   &allow_index)) {
+    return NULL;
+  }
+
+  guava_server_t *server = guava_server_new();
+
+  StaticRouter *router = (StaticRouter *)PyObject_New(StaticRouter, &StaticRouterType);
+  router->router.router = (guava_router_t *)guava_router_static_new();
+  guava_router_set_mount_point(router->router.router, "/");
+  guava_router_static_set_directory((guava_router_static_t *)router->router.router, path);
+  guava_router_static_set_allow_index((guava_router_static_t *)router->router.router, allow_index);
+
+  guava_server_add_router(server, (Router *)router);
+  Py_DECREF(router);
+
+  guava_server_start(server);
+
+  Py_RETURN_NONE;
+}
+
 static PyMethodDef server_module_methods[] = {
+  {"start_static_server", (PyCFunction)server_start_static_server, METH_VARARGS | METH_KEYWORDS, "add one router"},
   {NULL}
 };
 
