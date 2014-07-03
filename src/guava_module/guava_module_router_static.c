@@ -8,6 +8,7 @@
 #include "guava_router/guava_router.h"
 #include "guava_module.h"
 #include "guava_module_router.h"
+#include "guava_memory.h"
 
 static PyObject *StaticRouter_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   StaticRouter *self;

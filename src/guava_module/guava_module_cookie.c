@@ -8,6 +8,7 @@
 #include "guava_cookie.h"
 #include "guava_string.h"
 #include "guava_module.h"
+#include "guava_memory.h"
 
 PyObject *Cookie_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Cookie *self;

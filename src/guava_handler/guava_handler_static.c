@@ -10,6 +10,7 @@
 #include "guava_router/guava_router.h"
 #include "guava_mime_type.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 #if defined(__APPLE__)
 extern int uv___stream_fd(const uv_stream_t* handle);
@@ -82,7 +83,7 @@ void guava_handler_static(guava_router_t *router,
     if (!S_ISDIR(s->st_mode)) {
       uv_fs_t open_req;
       int fd = uv_fs_open(&conn->server->loop, &open_req, filename, O_RDONLY, 0, NULL);
-      uv_fs_t *write_req = (uv_fs_t *)malloc(sizeof(*write_req));
+      uv_fs_t *write_req = (uv_fs_t *)guava_malloc(sizeof(*write_req));
       uv_fs_sendfile(&conn->server->loop, write_req, GUAVA_LIBUV_GET_STREAM_FD((uv_stream_t *)&conn->stream), fd, 0, (size_t)s->st_size, on_sendfile);
     }
   } while(0);

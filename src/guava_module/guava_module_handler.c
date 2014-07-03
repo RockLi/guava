@@ -8,6 +8,7 @@
 #include "guava_handler.h"
 #include "guava_string.h"
 #include "guava_module.h"
+#include "guava_memory.h"
 
 PyObject *Handler_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Handler *self;

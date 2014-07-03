@@ -5,9 +5,10 @@
  */
 
 #include "guava_session/guava_session_store_inmem.h"
+#include "guava_memory.h"
 
 guava_session_store_inmem_t *guava_session_store_inmem_new(void) {
-  guava_session_store_inmem_t *store = (guava_session_store_inmem_t *)calloc(1, sizeof(*store));
+  guava_session_store_inmem_t *store = (guava_session_store_inmem_t *)guava_calloc(1, sizeof(*store));
   if (!store) {
     return NULL;
   }
@@ -21,7 +22,7 @@ void guava_session_store_inmem_free(guava_session_store_inmem_t *store) {
     return;
   }
   Py_DECREF(store->items);
-  free(store);
+  guava_free(store);
 }
 
 PyObject *guava_session_store_inmem_get(guava_session_store_inmem_t *store, guava_session_id_t id) {

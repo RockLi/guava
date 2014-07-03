@@ -10,6 +10,7 @@
 #include "guava_module.h"
 #include "guava_module_router.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 static PyObject *MVCRouter_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   MVCRouter *self;

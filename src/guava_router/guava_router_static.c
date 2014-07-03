@@ -10,9 +10,10 @@
 #include "guava_response.h"
 #include "guava_handler.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 guava_router_static_t *guava_router_static_new(void) {
-  guava_router_static_t *router = (guava_router_static_t *)malloc(sizeof(guava_router_static_t));
+  guava_router_static_t *router = (guava_router_static_t *)guava_malloc(sizeof(guava_router_static_t));
   if (!router) {
     return NULL;
   }
@@ -53,7 +54,7 @@ void guava_router_static_free(guava_router_static_t *router) {
     guava_string_free(router->directory);
   }
 
-  free(router);
+  guava_free(router);
 }
 
 void guava_router_static_set_directory(guava_router_static_t *router, const char *directory) {

@@ -10,9 +10,10 @@
 #include "guava_response.h"
 #include "guava_handler.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 guava_router_rest_t *guava_router_rest_new(void) {
-  guava_router_rest_t *router = (guava_router_rest_t *)calloc(1, sizeof(guava_router_rest_t));
+  guava_router_rest_t *router = (guava_router_rest_t *)guava_calloc(1, sizeof(guava_router_rest_t));
   if (!router) {
     return NULL;
   }
@@ -36,7 +37,7 @@ void guava_router_rest_free(guava_router_rest_t *router) {
   }
 
   if (router) {
-    free(router);
+    guava_free(router);
   }
 }
 

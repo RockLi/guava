@@ -9,6 +9,7 @@
 #include "guava_response.h"
 #include "guava_session/guava_session.h"
 #include "guava_cookie.h"
+#include "guava_memory.h"
 
 static PyObject *Controller_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Controller *self;

@@ -5,6 +5,7 @@
  */
 
 #include "guava_module.h"
+#include "guava_memory.h"
 
 extern PyObject *init_request(void);
 

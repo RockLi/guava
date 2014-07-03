@@ -5,6 +5,7 @@
  */
 
 #include "guava_string.h"
+#include "guava_memory.h"
 #include <string.h>
 
 guava_string_t guava_string_new(const char *init) {
@@ -15,9 +16,9 @@ guava_string_t guava_string_new_size(const char *init, size_t len) {
   guava_string_header_t *h;
 
   if (init) {
-    h = malloc(sizeof(guava_string_header_t) + len + 1);
+    h = guava_malloc(sizeof(guava_string_header_t) + len + 1);
   } else {
-    h = calloc(1, sizeof(guava_string_header_t) + len + 1);
+    h = guava_calloc(1, sizeof(guava_string_header_t) + len + 1);
   }
 
   if (!h) {
@@ -37,7 +38,7 @@ guava_string_t guava_string_new_size(const char *init, size_t len) {
 
 void guava_string_free(const guava_string_t gs) {
   guava_string_header_t *h = (guava_string_header_t *)((char *)gs - sizeof(guava_string_header_t));
-  free(h);
+  guava_free(h);
 }
 
 guava_string_t guava_string_append(const guava_string_t gs, const guava_string_t gs2) {
@@ -56,7 +57,7 @@ guava_string_t guava_string_append_raw_size(const guava_string_t gs, const char 
   }
 
   h = (guava_string_header_t *)((char *)gs - sizeof(guava_string_header_t));
-  h = realloc(h, sizeof(guava_string_header_t) + h->len + len + 1);
+  h = guava_realloc(h, sizeof(guava_string_header_t) + h->len + len + 1);
 
   memcpy(h->data + h->len, s, len);
   h->len += len;

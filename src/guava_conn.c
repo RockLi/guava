@@ -7,9 +7,10 @@
 #include "guava_conn.h"
 #include "guava_string.h"
 #include "guava_request.h"
+#include "guava_memory.h"
 
 guava_conn_t *guava_conn_new() {
-  guava_conn_t *conn = (guava_conn_t *)calloc(1, sizeof(guava_conn_t));
+  guava_conn_t *conn = (guava_conn_t *)guava_calloc(1, sizeof(guava_conn_t));
   if (!conn) {
     return NULL;
   }
@@ -33,5 +34,5 @@ void guava_conn_free(guava_conn_t *conn) {
     guava_string_free(conn->auxiliary_current_header);
   }
 
-  free(conn);
+  guava_free(conn);
 }

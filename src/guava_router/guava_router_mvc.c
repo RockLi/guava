@@ -10,9 +10,10 @@
 #include "guava_response.h"
 #include "guava_handler.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 guava_router_mvc_t *guava_router_mvc_new(void) {
-  guava_router_mvc_t *router = (guava_router_mvc_t *)malloc(sizeof(guava_router_mvc_t));
+  guava_router_mvc_t *router = (guava_router_mvc_t *)guava_malloc(sizeof(guava_router_mvc_t));
   if (!router) {
     return NULL;
   }
@@ -47,7 +48,7 @@ void guava_router_mvc_free(guava_router_mvc_t *router) {
     Py_DECREF(router->route.routes);
   }
 
-  free(router);
+  guava_free(router);
 }
 
 void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, guava_handler_t *handler) {

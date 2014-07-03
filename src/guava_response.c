@@ -7,9 +7,10 @@
 #include "guava_response.h"
 #include "guava_string.h"
 #include "guava_module.h"
+#include "guava_memory.h"
 
 guava_response_t *guava_response_new(void) {
-  guava_response_t *resp = (guava_response_t *)malloc(sizeof(guava_response_t));
+  guava_response_t *resp = (guava_response_t *)guava_malloc(sizeof(guava_response_t));
   if (!resp) {
     return NULL;
   }
@@ -44,7 +45,7 @@ void guava_response_free(guava_response_t *resp) {
     Py_DECREF(resp->cookies);
   }
 
-  free(resp);
+  guava_free(resp);
 }
 
 void guava_response_set_conn(guava_response_t *resp, guava_conn_t *conn) {

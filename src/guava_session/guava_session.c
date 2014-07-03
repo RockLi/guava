@@ -8,6 +8,7 @@
 #include "guava_session/guava_session.h"
 #include "guava_session/guava_session_store_inmem.h"
 #include "guava_session/guava_session_store_file.h"
+#include "guava_memory.h"
 
 #define GUAVA_SESSION_MAGIC "avaug"
 #define GUAVA_SESSION_MAGIC_END "guava"

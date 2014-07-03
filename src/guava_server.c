@@ -9,9 +9,10 @@
 #include "guava_router/guava_router.h"
 #include "guava_module.h"
 #include "guava_module_router.h"
+#include "guava_memory.h"
 
 guava_server_t *guava_server_new() {
-  guava_server_t *server = (guava_server_t *)malloc(sizeof(guava_server_t));
+  guava_server_t *server = (guava_server_t *)guava_malloc(sizeof(guava_server_t));
   if (!server) {
     return NULL;
   }
@@ -22,7 +23,7 @@ guava_server_t *guava_server_new() {
 
 void guava_server_free(guava_server_t *server) {
   Py_XDECREF(server->routers);
-  free(server);
+  guava_free(server);
 }
 
 void guava_server_on_conn(uv_stream_t *stream, int status) {
@@ -44,7 +45,7 @@ void guava_server_on_conn(uv_stream_t *stream, int status) {
 }
 
 void guava_server_on_alloc(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
-  *buf = uv_buf_init((char *)malloc(suggested_size), (unsigned int)suggested_size);
+  *buf = uv_buf_init((char *)guava_malloc(suggested_size), (unsigned int)suggested_size);
 }
 
 void guava_server_on_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf) {
@@ -57,7 +58,7 @@ void guava_server_on_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *bu
     }
   }
   if (buf->base) {
-    free(buf->base);
+    guava_free(buf->base);
   }
 }
 

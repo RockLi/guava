@@ -9,6 +9,7 @@
 #include "guava_module.h"
 #include "guava_module_router.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 static PyObject *RESTRouter_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   RESTRouter *self;

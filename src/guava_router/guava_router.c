@@ -9,9 +9,10 @@
 #include "guava_request.h"
 #include "guava_response.h"
 #include "guava_module.h"
+#include "guava_memory.h"
 
 guava_router_t *guava_router_new(void) {
-  guava_router_t *router = (guava_router_t *)calloc(1, sizeof(guava_router_t));
+  guava_router_t *router = (guava_router_t *)guava_calloc(1, sizeof(guava_router_t));
   if (router) {
     router->mount_point = NULL;
     router->package = NULL;
@@ -75,7 +76,7 @@ void guava_router_set_routes(guava_router_t *router, PyObject *routes) {
 PyObject *guava_router_get_best_matched_router(PyObject *routers, PyObject *request) {
   Router *router = NULL;
   Py_ssize_t size = PyList_Size(routers);
-  size_t best_length = 0; 
+  size_t best_length = 0;
 
   for (Py_ssize_t i = 0; i < size; ++i) {
       Router *r = (Router *)PyList_GetItem(routers, i);

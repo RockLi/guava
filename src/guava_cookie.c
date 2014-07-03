@@ -7,6 +7,7 @@
 #include "guava_cookie.h"
 #include "guava_string.h"
 #include "guava_module.h"
+#include "guava_memory.h"
 
 PyObject *guava_cookie_new_object(const char  *name,
                                   const char  *value,
@@ -40,7 +41,7 @@ PyObject *guava_cookie_new_object(const char  *name,
 }
 
 guava_cookie_t *guava_cookie_new() {
-  guava_cookie_t *cookie = (guava_cookie_t *)malloc(sizeof(*cookie));
+  guava_cookie_t *cookie = (guava_cookie_t *)guava_malloc(sizeof(*cookie));
   if (!cookie) {
     return NULL;
   }
@@ -74,7 +75,7 @@ void guava_cookie_free(guava_cookie_t *cookie) {
     guava_string_free(cookie->path);
   }
 
-  free(cookie);
+  guava_free(cookie);
 }
 
 void guava_cookie_set_name(guava_cookie_t *cookie,

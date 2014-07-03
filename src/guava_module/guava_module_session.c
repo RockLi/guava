@@ -7,6 +7,7 @@
 #include "guava_module.h"
 #include "guava_module_session.h"
 #include "guava_session/guava_session.h"
+#include "guava_memory.h"
 
 static PyObject *SessionStore_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   SessionStore *self;

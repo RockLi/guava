@@ -1,5 +1,6 @@
 from distutils.core import setup, Extension
 
+import os
 import platform
 
 OS = platform.system()
@@ -22,7 +23,8 @@ guava_sources =[ SRC_FOLDER + name for name in [
     'guava_session/guava_session.c',
     'guava_session/guava_session_store_inmem.c',
     'guava_session/guava_session_store_file.c',
-    'guava_cookie.c'
+    'guava_cookie.c',
+    'guava_memory.c',
 ]]
 
 http_parser_include = ['deps/http-parser']
@@ -36,6 +38,11 @@ if OS == 'Linux':
     libraries = ['rt']
 else:
     libraries = []
+
+macros = [('HTTP_PARSER_STRICT', 1)]
+
+if os.environ.get('GUAVA_DEBUG', None):
+    macros += [('GUAVA_MEM_DEBUG', 1)]
 
 guava_module = Extension('guava',
                          sources=guava_sources + http_parser_files + [
@@ -53,7 +60,7 @@ guava_module = Extension('guava',
                          ],
                          include_dirs=['./include/'] + http_parser_include + libuv_include,
                          libraries=[] + libraries,
-                         define_macros=[('HTTP_PARSER_STRICT', 1)],
+                         define_macros=macros,
                          extra_compile_args=compile_flags,
                          extra_objects=['./deps/libuv/.libs/libuv.a'])
 

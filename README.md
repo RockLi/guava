@@ -215,11 +215,11 @@ Run tests: ```python -m unittest discover```
 
 1. Launch a web server at current directory
 
-```python -c 'import guava;guava.server.start_static_server(".")'```
+    ```python -c 'import guava;guava.server.start_static_server(".")'```
 
-It's the same as
+    It's the same as
 
-```python -m SimpleHTTPServer```
+    ```python -m SimpleHTTPServer```
 
 
 ## Performance

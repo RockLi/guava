@@ -7,6 +7,7 @@
 #include "guava_session/guava_session_store_file.h"
 #include "guava_string.h"
 #include <marshal.h>
+#include "guava_memory.h"
 
 void guava_session_store_file_get_file_name(guava_session_store_file_t *store, guava_session_id_t id, char *path, size_t path_len) {
   snprintf(path, path_len, "%s/%s", store->path, id);
@@ -20,7 +21,7 @@ FILE *guava_session_store_file_open(guava_session_store_file_t *store, guava_ses
 }
 
 guava_session_store_file_t *guava_session_store_file_new(void) {
-  guava_session_store_file_t *store = (guava_session_store_file_t *)calloc(1, sizeof(*store));
+  guava_session_store_file_t *store = (guava_session_store_file_t *)guava_calloc(1, sizeof(*store));
   if (!store) {
     return NULL;
   }
@@ -38,7 +39,7 @@ void guava_session_store_file_free(guava_session_store_file_t *store) {
     guava_string_free(store->path);
   }
 
-  free(store);
+  guava_free(store);
 }
 
 PyObject *guava_session_store_file_get(guava_session_store_file_t *store, guava_session_id_t id) {

@@ -9,6 +9,7 @@
 #include "guava_module.h"
 #include "guava_router/guava_router.h"
 #include "guava_module_router.h"
+#include "guava_memory.h"
 
 typedef struct {
   PyObject_HEAD

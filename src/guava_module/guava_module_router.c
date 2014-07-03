@@ -6,6 +6,7 @@
 
 #include "guava_module.h"
 #include "guava_module_router.h"
+#include "guava_memory.h"
 
 static PyObject *Router_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Router *self;

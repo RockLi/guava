@@ -15,6 +15,7 @@
 #include "guava_module.h"
 #include "guava_session/guava_session.h"
 #include "guava_cookie.h"
+#include "guava_memory.h"
 
 static guava_request_method_t guava_request_methods[] = {
   {0, "DELETE"},
@@ -51,7 +52,7 @@ static guava_request_method_t guava_request_methods[] = {
 };
 
 guava_request_t *guava_request_new(void) {
-  guava_request_t *req = (guava_request_t *)calloc(1, sizeof(guava_request_t));
+  guava_request_t *req = (guava_request_t *)guava_calloc(1, sizeof(guava_request_t));
   if (!req) {
     return NULL;
   }
@@ -63,7 +64,7 @@ guava_request_t *guava_request_new(void) {
 
   req->headers = PyDict_New();
   if (!req->headers) {
-    free(req);
+    guava_free(req);
     return NULL;
   }
 
@@ -74,7 +75,7 @@ guava_request_t *guava_request_new(void) {
   req->GET = PyDict_New();
   if (!req->GET) {
     Py_DECREF(req->headers);
-    free(req);
+    guava_free(req);
     return NULL;
   }
 
@@ -82,7 +83,7 @@ guava_request_t *guava_request_new(void) {
   if (!req->POST) {
     Py_DECREF(req->headers);
     Py_DECREF(req->GET);
-    free(req);
+    guava_free(req);
     return NULL;
   }
 
@@ -91,7 +92,7 @@ guava_request_t *guava_request_new(void) {
     Py_DECREF(req->headers);
     Py_DECREF(req->GET);
     Py_DECREF(req->POST);
-    free(req);
+    guava_free(req);
     return NULL;
   }
 
@@ -139,7 +140,7 @@ void guava_request_free(guava_request_t *req) {
     req->COOKIES = NULL;
   }
 
-  free(req);
+  guava_free(req);
 }
 
 int8_t guava_request_get_method(const char *s) {

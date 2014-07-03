@@ -6,9 +6,10 @@
 
 #include "guava_handler.h"
 #include "guava_string.h"
+#include "guava_memory.h"
 
 guava_handler_t *guava_handler_new() {
-  guava_handler_t *handler = (guava_handler_t *)calloc(1, sizeof(guava_handler_t));
+  guava_handler_t *handler = (guava_handler_t *)guava_calloc(1, sizeof(guava_handler_t));
   if (!handler) {
     return NULL;
   }
@@ -19,7 +20,7 @@ guava_handler_t *guava_handler_new() {
 void guava_handler_free(guava_handler_t *handler) {
   if (handler) {
     guava_handler_deinit(handler);
-    free(handler);
+    guava_free(handler);
   }
 }
 

@@ -8,6 +8,7 @@
 #include "guava_request.h"
 #include "guava_module.h"
 #include "guava_string.h"
+#include "guava_memory.h"
 
 static PyObject *Request_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Request *self;
