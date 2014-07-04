@@ -7,6 +7,8 @@ OS = platform.system()
 
 SRC_FOLDER = './src/'
 
+os.system("./build.sh")
+
 guava_sources =[ SRC_FOLDER + name for name in [
     'guava_conn.c',
     'guava_handler/guava_handler.c',

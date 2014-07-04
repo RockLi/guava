@@ -211,6 +211,11 @@ http-parser | http request/response parser for c
 Run tests: ```python -m unittest discover```
 
 
+### Install from github using pip
+
+```sudo pip install -e git+https://github.com/flatpeach/guava.git#egg=guava```
+
+
 ## Quick Usage Tricks
 
 1. Launch a web server at current directory
