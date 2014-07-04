@@ -2,11 +2,10 @@
 
 import guava
 
-class MyRouter(guava.router.CustomRouter):
+class MyRouter(guava.router.Router):
 
-    def __init__(self):
-        super(MyRouter, self).__init__()
-        self.register_handler(path='/hello', method='GET', package='.', controller='IndexController', action='hello_msg')
+    def __init__(self, *args, **kwargs):
+        super(MyRouter, self).__init__(*args, **kwargs)
 
     def route(self, req):
         if req.path == '/me' and req.GET['name'] == 'rock':
@@ -19,27 +18,27 @@ class MyRouter(guava.router.CustomRouter):
 
 
 if __name__ == "__main__":
-	session_store = guava.session.MemStore()
+    session_store = guava.session.SessionStore(type=guava.session.Mem)
 
     server = guava.server.Server(ip="0.0.0.0",
                                  port=8000,
                                  backlog=128,
-                                 auto_reload=True,
-								 session_store=session_store)
+                                 auto_reload=True)
 
-    mvc_router = guava.router.MVCRouter(path="/", enable_session=True)
+    mvc_router = guava.router.MVCRouter(mount_point="/",
+                                        package='controllers',
+                                        session_store=session_store)
 
-    static_router = guava.router.StaticRouter(path="/static", directory="my_static_dir", allow_index=True)
+    static_router = guava.router.StaticRouter(mount_point="/static", directory="my_static_dir", allow_index=True)
 
-    api_router = guava.router.RESTRouter(path="/api", enable_session=False)
+    api_router = guava.router.RESTRouter(mount_point="/api", session_store=None)
 
-    #misc_router = guava.router.CustomRouter({
-    #    "/about": guava.handler.Handler(package=".", module='me', cls="MiscController", action= "about")
-    #})
+    misc_router = guava.router.Router({
+        "/about": guava.handler.Handler(package=".", module='me', cls="MiscController", action= "about")
+    })
 
-    #my_router = MyRouter()
+    my_router = MyRouter()
 
-    #server.add_router(mvc_router, static_router, api_router, misc_router, my_router)
-    server.add_router(static_router)
+    server.add_router(mvc_router, static_router, api_router, misc_router, my_router)
 
     server.serve()

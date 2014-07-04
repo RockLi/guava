@@ -67,7 +67,7 @@ void guava_server_on_close(uv_handle_t *handle) {
   guava_conn_free(conn);
 }
 
-void guava_server_start(guava_server_t *server) {
+void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, int backlog) {
   if (!server->routers) {
     fprintf(stderr, "No routers set, will use the default router: StaticRouter\n");
 
@@ -85,13 +85,13 @@ void guava_server_start(guava_server_t *server) {
 
   struct sockaddr_in address;
 
-  uv_ip4_addr("0.0.0.0", 8000, &address);
+  uv_ip4_addr(ip, port, &address);
 
   uv_tcp_bind(&server->server, (const struct sockaddr *)&address, 0);
 
   server->server.data = server;
 
-  uv_listen((uv_stream_t *)&server->server, 128, guava_server_on_conn);
+  uv_listen((uv_stream_t *)&server->server, backlog, guava_server_on_conn);
 
   /* Py_BEGIN_ALLOW_THREADS */
   uv_run(&server->loop, UV_RUN_DEFAULT);

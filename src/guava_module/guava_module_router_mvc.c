@@ -30,21 +30,25 @@ static void MVCRouter_dealloc(MVCRouter *self) {
 }
 
 static int MVCRouter_init(MVCRouter *self, PyObject *args, PyObject *kwds) {
-  static char *kwlist[] = {"mount_point", "session_store", NULL};
+  static char *kwlist[] = {"mount_point", "package", "session_store", NULL};
 
   char *mount_point = NULL;
+  char *package = ".";
   SessionStore *session_store = NULL;
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "s|O",
+                                   "s|sO",
                                    kwlist,
                                    &mount_point,
+                                   &package,
                                    &session_store)) {
     return -1;
   }
 
   guava_router_set_mount_point((guava_router_t *)self->router.router, mount_point);
+
+  guava_router_set_package((guava_router_t *)self->router.router, package);
 
   if (session_store) {
     Py_INCREF(session_store);

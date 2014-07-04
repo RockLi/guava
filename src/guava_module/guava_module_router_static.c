@@ -50,8 +50,10 @@ static int StaticRouter_init(StaticRouter *self, PyObject *args, PyObject *kwds)
   guava_router_static_set_directory((guava_router_static_t *)self->router.router, directory);
   guava_router_static_set_allow_index((guava_router_static_t *)self->router.router, allow_index);
 
-  Py_INCREF(session_store);
-  guava_router_set_session_store((guava_router_t *)self->router.router, session_store->store);
+  if (session_store) {
+    Py_INCREF(session_store);
+    guava_router_set_session_store((guava_router_t *)self->router.router, session_store->store);
+  }
 
   return 0;
 }

@@ -28,9 +28,9 @@ static PyObject *Server_new(PyTypeObject *type, PyObject *args, PyObject *kwds) 
   self = (Server *)type->tp_alloc(type, 0);
   if (self) {
     self->server = guava_server_new();
-    self->ip = "0.0.0.0";
-    self->port = 8000;
-    self->backlog = 128;
+    self->ip = GUAVA_SERVER_DEFAULT_LISTEN_IP;
+    self->port = GUAVA_SERVER_DEFAULT_LISTEN_PORT;
+    self->backlog = GUAVA_SERVER_DEFAULT_LISTEN_BACKLOG;
     self->auto_reload = 0;
   }
 
@@ -61,7 +61,7 @@ static int Server_init(Server *self, PyObject *args, PyObject *kwds) {
 }
 
 static PyObject *Server_serve(Server *self) {
-  guava_server_start(self->server);
+  guava_server_start(self->server, self->ip, self->port, self->backlog);
   Py_RETURN_NONE;
 }
 
@@ -173,7 +173,7 @@ static PyObject *server_start_static_server(PyObject *self, PyObject *args, PyOb
   guava_server_add_router(server, (Router *)router);
   Py_DECREF(router);
 
-  guava_server_start(server);
+  guava_server_start(server, GUAVA_SERVER_DEFAULT_LISTEN_IP, GUAVA_SERVER_DEFAULT_LISTEN_PORT, GUAVA_SERVER_DEFAULT_LISTEN_BACKLOG);
 
   Py_RETURN_NONE;
 }

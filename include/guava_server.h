@@ -22,7 +22,7 @@ void guava_server_on_read(uv_stream_t *stream, ssize_t read, const uv_buf_t *buf
 
 void guava_server_on_close(uv_handle_t *handle);
 
-void guava_server_start(guava_server_t *server);
+void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, int backlog);
 
 void guava_server_add_router(guava_server_t *server, Router *router);
 

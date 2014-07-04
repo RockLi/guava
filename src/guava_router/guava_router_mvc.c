@@ -93,7 +93,7 @@ void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, gu
     action = guava_string_new("index");
   }
 
-  handler->package = guava_string_new(".");
+  handler->package = guava_string_new(router->route.package);
   handler->module = module;
   handler->cls = cls;
   handler->action = action;

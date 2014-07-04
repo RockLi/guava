@@ -40,6 +40,10 @@ typedef uint8_t guava_bool_t;
 #define MAXPATH 1024
 #endif
 
+#define GUAVA_SERVER_DEFAULT_LISTEN_IP "0.0.0.0"
+#define GUAVA_SERVER_DEFAULT_LISTEN_PORT 8000
+#define GUAVA_SERVER_DEFAULT_LISTEN_BACKLOG 128
+
 typedef struct {
   size_t len;
   char   data[0];
