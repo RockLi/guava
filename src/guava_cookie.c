@@ -201,9 +201,7 @@ PyObject *guava_cookie_parse(char **data) {
       break;
     }
 
-    name_end = p;
-
-    p += 1;
+    name_end = p++;
 
     if (*p == '\0') {
       break;
