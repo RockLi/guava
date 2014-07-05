@@ -204,9 +204,7 @@ http-parser | http request/response parser for c
 
 ### Install from Git
 
-```git submodule update --init```
-
-```sudo ./build.sh```
+```sudo python setup.py install```
 
 Run tests: ```python -m unittest discover```
 
