@@ -5,9 +5,9 @@
  */
 
 #include "guava_memory.h"
-#include <assert.h>
 
 #ifdef GUAVA_MEM_DEBUG
+#include <assert.h>
 
 const uint32_t guava_mem_magic_number = 0x526F636B;
 

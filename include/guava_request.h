@@ -37,4 +37,6 @@ void guava_request_free(guava_request_t *req);
 
 void guava_request_extract_from_url(guava_request_t *req);
 
+char *guava_request_parse_form_data(char **data, guava_string_t *name, guava_string_t *value);
+
 #endif /* !__GUAVA_REQUEST_H__ */

@@ -34,7 +34,7 @@ void guava_session_id_free(guava_session_id_t id) {
 guava_session_store_t *guava_session_store_new(guava_session_store_type_t type) {
   guava_session_new_id();
 
-  guava_session_store_t *store;
+  guava_session_store_t *store = NULL;
 
   switch(type) {
   case GUAVA_SESSION_STORE_INMEM: {

@@ -290,6 +290,33 @@ int guava_request_on_body(http_parser *parser, const char *buf, size_t len) {
   Request *request = (Request *)conn->request;
   if (len) {
     request->req->body = guava_string_append_raw_size(request->req->body, buf, len);
+
+    PyObject *content_type = PyDict_GetItemString(request->req->headers, "Content-Type");
+    if (content_type) {
+      char *form_data = request->req->body;
+      char **p = &form_data;
+      if (strcmp(PyString_AsString(content_type), "application/x-www-form-urlencoded") == 0) {
+        guava_string_t name = NULL;
+        guava_string_t value = NULL;
+
+        while (guava_request_parse_form_data(p, &name, &value)) {
+          PyObject *s = PyString_FromString(value);
+          PyDict_SetItemString(request->req->POST, name, s);
+          Py_DECREF(s);
+
+          name = NULL;
+          value = NULL;
+        }
+
+        if (name) {
+          guava_string_free(name);
+        }
+        if (value) {
+          guava_string_free(value);
+        }
+
+      }
+    }
   }
 
   return 0;
@@ -450,4 +477,66 @@ int guava_request_on_message_complete(http_parser *parser) {
   Py_XDECREF(conn->request);
 
   return 0;
+}
+
+char *guava_request_parse_form_data(char **data, guava_string_t *name, guava_string_t *value) {
+  if (!data || *data == '\0') {
+    return NULL;
+  }
+
+  char *p = *data;
+
+  char *name_start = NULL;
+  char *name_end = NULL;
+  char *value_start = NULL;
+  char *value_end = NULL;
+
+  while(isspace(*p)) {
+    ++p;
+  }
+
+  do {
+    if (*p == '\0') {
+      break;
+    }
+
+    name_start = p;
+
+    while (*p != '=') {
+      ++p;
+    }
+
+    if (*p != '=') {
+      break;
+    }
+
+    name_end = p++;
+
+    if (*p == '\0') {
+      break;
+    }
+
+    value_start = p;
+
+    while (*p != '&' && *p != '\0') {
+      ++p;
+    }
+
+    value_end = p;
+
+    if (*p == '&') {
+      ++p;
+    }
+
+    *data = p;
+  } while(0);
+
+  if (!name_start || !name_end || !value_start || !value_end) {
+    return NULL;
+  }
+
+  *name = guava_string_new_size(name_start, name_end - name_start);
+  *value = guava_string_new_size(value_start, value_end - value_start);
+
+  return *data;
 }
