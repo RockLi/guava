@@ -21,7 +21,7 @@ Anyways, you can evaluate it, hack it in advance. If you want to contribute, ple
 
 ## Philosophy of Guava
 
-For the detailed story and design of the Guava project, please go to [my blog](http://www.code-trick.com) (**Haven't finished yet**)
+For the detailed story and design of the Guava project, please go to [my blog](http://www.code-trick.com).
 
 1. High performance
 2. Convention over configuration
