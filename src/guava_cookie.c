@@ -230,6 +230,7 @@ PyObject *guava_cookie_parse(char **data) {
   value = guava_string_new_size(value_start, value_end - value_start);
 
   cookie = PyObject_New(Cookie, &CookieType);
+  memset(&cookie->data, 0, sizeof(guava_cookie_t));
   guava_cookie_set_name(&cookie->data, name);
   guava_cookie_set_value(&cookie->data, value);
 
