@@ -5,7 +5,6 @@ python:
 
 before_install:
   - sudo apt-get install python-dev
-  - ./build.sh
 
 install: python setup.py install
 
