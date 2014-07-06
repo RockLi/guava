@@ -67,6 +67,18 @@ void guava_server_on_close(uv_handle_t *handle) {
   guava_conn_free(conn);
 }
 
+void signal_shutdown_cb(uv_signal_t *handle, int signum) {
+  fprintf(stderr, "Caught signal, ready to shutdown the web server\n");
+
+  guava_server_t *server = (guava_server_t *)handle->data;
+
+  uv_loop_close(&server->loop);
+
+  uv_signal_stop(&server->signal);
+
+  exit(0);
+}
+
 void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, int backlog) {
   if (!server->routers) {
     fprintf(stderr, "No routers set, will use the default router: StaticRouter\n");
@@ -90,6 +102,10 @@ void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, i
   uv_tcp_bind(&server->server, (const struct sockaddr *)&address, 0);
 
   server->server.data = server;
+
+  uv_signal_init(&server->loop, &server->signal);
+  uv_signal_start(&server->signal, signal_shutdown_cb, SIGINT);
+  server->signal.data = server;
 
   uv_listen((uv_stream_t *)&server->server, backlog, guava_server_on_conn);
 
