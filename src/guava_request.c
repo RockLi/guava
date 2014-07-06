@@ -411,6 +411,9 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     if (!module) {
       fprintf(stderr, "no module named: %s\n", PyString_AsString(module_name));
+      if (PyErr_Occurred()) {
+        PyErr_Print();
+      }
       guava_response_500(resp, NULL);
       guava_response_send(resp, on_write);
       break;
@@ -424,6 +427,9 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     if (!cls) {
       fprintf(stderr, "no cls named: %s\n", PyString_AsString(cls_name));
+      if (PyErr_Occurred()) {
+        PyErr_Print();
+      }
       guava_response_500(resp, NULL);
       guava_response_send(resp, on_write);
       break;
@@ -445,7 +451,9 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     if (!PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL)) {
       Py_DECREF(c);
-      PyErr_Print();
+      if (PyErr_Occurred()) {
+        PyErr_Print();
+      }
       fprintf(stderr, "failed to execute action: %s\n", handler->handler->action);
       guava_response_500(resp, NULL);
       guava_response_send(resp, on_write);

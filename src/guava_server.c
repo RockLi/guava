@@ -12,12 +12,14 @@
 #include "guava_memory.h"
 
 guava_server_t *guava_server_new() {
-  guava_server_t *server = (guava_server_t *)guava_malloc(sizeof(guava_server_t));
+  guava_server_t *server = (guava_server_t *)guava_calloc(1, sizeof(guava_server_t));
   if (!server) {
     return NULL;
   }
 
   server->routers = NULL;
+  server->debug = GUAVA_FALSE;
+
   return server;
 }
 

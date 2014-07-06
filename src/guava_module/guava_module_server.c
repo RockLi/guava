@@ -44,16 +44,17 @@ static void Server_dealloc(Server *self) {
 }
 
 static int Server_init(Server *self, PyObject *args, PyObject *kwds) {
-  static char *kwlist[] = {"ip", "port", "backlog", "auto_reload", NULL};
+  static char *kwlist[] = {"ip", "port", "backlog", "auto_reload", "debug", NULL};
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "|siib",
+                                   "|siibb",
                                    kwlist,
                                    &self->ip,
                                    &self->port,
                                    &self->backlog,
-                                   &self->auto_reload)) {
+                                   &self->auto_reload,
+                                   &self->server->debug)) {
     return -1;
   }
 
@@ -86,11 +87,12 @@ static PyObject *Server_add_router(Server *self, PyObject *args) {
 }
 
 static PyObject *Server_repr(Server *self) {
-  return PyString_FromFormat("Server listen(%s:%d), backlog(%d), auto_reload(%s)",
+  return PyString_FromFormat("Server listen(%s:%d), backlog(%d), auto_reload(%s), debug(%s)",
                              self->ip,
                              self->port,
                              self->backlog,
-                             self->auto_reload ? "TRUE" : "FALSE");
+                             self->auto_reload ? "TRUE" : "FALSE",
+                             self->server->debug ? "TRUE" : "FALSE");
 }
 
 static PyMemberDef Server_members[] = {

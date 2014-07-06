@@ -98,6 +98,7 @@ typedef struct {
   uv_tcp_t     server;
   uv_signal_t  signal;
   PyObject    *routers;
+  guava_bool_t debug;
 } guava_server_t;
 
 typedef struct {
