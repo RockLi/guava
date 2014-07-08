@@ -449,7 +449,14 @@ int guava_request_on_message_complete(http_parser *parser) {
     c->req = ((Request *)conn->request)->req;
     c->router = handler->handler->router;
 
-    if (!PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL)) {
+    PyObject *r = NULL;
+    if (handler->handler->args) {
+      r = PyObject_CallMethod((PyObject *)c, handler->handler->action, "O", handler->handler->args);
+    } else {
+      r = PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL);
+    }
+
+    if (!r) {
       Py_DECREF(c);
       if (PyErr_Occurred()) {
         PyErr_Print();
@@ -462,9 +469,7 @@ int guava_request_on_message_complete(http_parser *parser) {
 
     if (handler->handler->router->session_store && c->SESSION) {
       guava_request_t *r = ((Request *)conn->request)->req;
-
       PyObject *sid_cookie = PyDict_GetItemString(r->COOKIES, handler->handler->router->session_store->name);
-
       guava_session_id_t sid = NULL;
 
       if (sid) {

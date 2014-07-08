@@ -20,28 +20,31 @@ class TestRouterMVC(unittest.TestCase):
 
     def test_router(self):
         req = guava.request.Request()
-        req.url = '/'
         req.method = 'GET'
 
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'index')
-        self.assertEqual(handler.cls, 'IndexController')
-        self.assertEqual(handler.action, 'index')
+        req.url = '/'
+        self.assert_handler(self.router.route(req), '.', 'index', 'IndexController', 'index')
 
         req.url = '/about'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'about')
-        self.assertEqual(handler.cls, 'AboutController')
-        self.assertEqual(handler.action, 'index')
+        self.assert_handler(self.router.route(req), '.', 'about', 'AboutController', 'index')
 
         req.url = '/about/hello'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'about')
-        self.assertEqual(handler.cls, 'AboutController')
-        self.assertEqual(handler.action, 'hello')
+        self.assert_handler(self.router.route(req), '.', 'about', 'AboutController', 'hello')
+
+        req.url = '/post/view/10'
+        self.assert_handler(self.router.route(req), '.', 'post', 'PostController', 'view', ('10',))
+
+        req.url = '/post/move/10/20'
+        self.assert_handler(self.router.route(req), '.', 'post', 'PostController', 'move', ('10', '20'))
+
+
+    def assert_handler(self, handler, package, module, cls, action, args=()):
+        self.assertEqual(handler.package, package)
+        self.assertEqual(handler.module, module)
+        self.assertEqual(handler.cls, cls)
+        self.assertEqual(handler.action, action)
+        if args:
+            self.assertEqual(handler.args, args)
 
 
 if __name__ == '__main__':

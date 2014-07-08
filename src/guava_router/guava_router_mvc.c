@@ -70,6 +70,8 @@ void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, gu
   guava_string_t module = NULL;
   guava_string_t cls = NULL;
   guava_string_t action = NULL;
+  PyObject *args = NULL;
+  PyObject *arg = NULL;
 
   size_t idx = 0;
   for (word = strtok_r(ptr, sep, &save); word; word = strtok_r(NULL, sep, &save), ++idx) {
@@ -80,6 +82,13 @@ void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, gu
       cls = guava_string_new(s);
     } else if (idx == 1) {
       action = guava_string_new(word);
+    } else {
+      arg = PyString_FromString(word);
+      if (!args) {
+        args = PyList_New(0);
+      }
+      PyList_Append(args, arg);
+      Py_DECREF(arg);
     }
   }
 
@@ -97,5 +106,11 @@ void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, gu
   handler->module = module;
   handler->cls = cls;
   handler->action = action;
+
+  if (args) {
+    handler->args = PyList_AsTuple(args);
+    Py_DECREF(args);
+  }
+
   guava_handler_mark_valid(handler);
 }

@@ -158,11 +158,44 @@ static int Handler_set_action(Handler *self, PyObject *value, void *closure) {
   return 0;
 }
 
+static PyObject *Handler_get_args(Handler *self, void *closure) {
+  guava_handler_t *handler = self->handler;
+  if (handler->args) {
+    Py_INCREF(handler->args);
+    return handler->args;
+  }
+
+  Py_RETURN_NONE;
+}
+
+static int Handler_set_args(Handler *self, PyObject *value, void *closure) {
+  guava_handler_t *handler = self->handler;
+  if (value == NULL)  {
+    PyErr_SetString(PyExc_TypeError, "Cannot delete the args attribute");
+    return -1;
+  }
+
+  if (!PyDict_Check(value)) {
+    PyErr_SetString(PyExc_TypeError, "The args attribute value must be a string");
+    return -1;
+  }
+
+  if (handler->args) {
+    Py_DECREF(handler->args);
+  }
+
+  Py_INCREF(value);
+  handler->args = value;
+
+  return 0;
+}
+
 static PyGetSetDef Handler_getseter[] = {
   {"package", (getter)Handler_get_package, (setter)Handler_set_package, "package", NULL},
   {"module", (getter)Handler_get_module, (setter)Handler_set_module, "module", NULL},
   {"cls", (getter)Handler_get_cls, (setter)Handler_set_cls, "cls", NULL},
   {"action", (getter)Handler_get_action, (setter)Handler_set_action, "action", NULL},
+  {"args", (getter)Handler_get_args, (setter)Handler_set_args, "args", NULL},
   {NULL}
 };
 

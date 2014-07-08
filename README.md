@@ -1,30 +1,32 @@
 # Guava [![Build Status](https://travis-ci.org/flatpeach/guava.svg)](https://travis-ci.org/flatpeach/guava)
 
-Guava is a super lightweight high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. keep in mind, this project is not just revent the wheel.
+Guava is a super lightweight and high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. Keep in mind, this project is not to revent the wheel.
 
-If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to write your own web framework!
+If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to construct your own web framework with the benifits of high performance which guava gives you.
 
-
-I wrote an article to explain the design of the guava framework.
-
-[Link here](http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/), please try to read that article, because this README.md maybe a little bit outdated.
+I wrote an article to explain a little bit of the design of the guava framework, [Link](http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/).
 
 
-## Status of this Project
+## Status
 
-Still under highly active development. The git repo is treated as **Preview Version**. So donot use it for production now.
+1. Under highly active development. 
+2. Haven't release any stable versions, this git repo is the **Developer Preview Version**. Donot use it for production now.
 
-I will release the stable version ASAP.
+I will release the stable version ASAP. I will also release the traditional web applications built on top of guava.
 
-Anyways, you can evaluate it, hack it in advance. If you want to contribute, please see the contribution section.
+Anyways, you can evaluate it, hack it in advance. Don't forget to star it if you think guava can help you in the future. :)
+
+If you want to contribute, please see the contribution section.
+
+I will try my best to keep this README.md up to date, any time it's better if you can read the source codes.
 
 
 ## Philosophy of Guava
 
-For the detailed story and design of the Guava project, please go to [my blog](http://www.code-trick.com).
+For the detailed story and design of the Guava project, please go to [My Blog](http://www.code-trick.com).
 
 1. High performance
-2. Convention over configuration
+2. Prefer convention over configuration
 3. Lightweight, only do what one web framework should do
 4. Super scalability
 
@@ -33,9 +35,48 @@ For the detailed story and design of the Guava project, please go to [my blog](h
 
 1. Asynchorous, build on top of libuv
 2. Builtin HTTP webserver
-3. Builtin routers: StaticRouter, MVCRouter, CustomRouter, RESTFulRouter
+3. Builtin routers: Router, StaticRouter, MVCRouter, RESTFulRouter
 4. Session Management: InMemory, Local FileSystem, Remote(SSO)
-5. Everything is configurable
+5. Everything is extensible
+
+
+## Performance
+
+
+I did a quick performance testing, all codes are stored in **benchmark** folder.
+
+If anything is not correct, please kindly to correct me. 
+
+
+Testing Environment:
+
+EC2: t2.micro 1CPU 0.613GIB EBS
+OS: Ubuntu14.04
+Benchmark program: [wrk](https://github.com/wg/wrk)
+
+
+1. Helloworld Performance
+
+Command: wrk -t12 -c400 -d30s http://127.0.0.1:8000/
+
+This runs a benchmark for 30 seconds, using 12 threads, and keeping
+400 HTTP connections open.
+
+Already disabled al
+
+| Framework |  Requests/s | Explaination |
+| --------- | ----------- | ------------ |
+| Flask     |  595.73 | Actually failed to run the full testing, lots of broken pipe |
+| CherryPy  |  1627.68 |
+| Tornado   |  3373.22 |
+| NodeJS    |  4977.63 |
+| Go        |  20230.32 |
+| guava     |  18799.11 | Memory Leak |
+
+
+The reason why this testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
+
+After basic features are finished, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava can be optimized.
 
 
 ## Deployment
@@ -60,7 +101,7 @@ The performance of the Guava builtin web server is good enough for serving as th
 
 Guava has four builtin routers trying to simplify your life. For detailed documentation, please refer to the doc directory in this repo.
 
-Each router has one mount point.
+Each router has one mount point. All routers will composite the tree like structures. The concept of mount point is for you easily group you sub applications.
 
 ### StaticRouter
 
@@ -83,11 +124,14 @@ mvc_router = guava.router.MVCRouter(mount_point="/")
 
 For exmaple:
 
-URL  | Class  | Action
----- | ------ | ------
-/    | IndexController | index
-/user | UserController | index
-/user/message | UserController | message
+|       URL      |     Package       | Module | Action |  Args  |  GET  | POST |
+| -------------- | ----------------- | ------ | ------ | ------ | ----- | ---- |
+| /              | controllers       | index  | index  | ()     | {}    | {}   |
+| /post          | controllers       | post   | index  | ()     | {}    | {}   |
+| /post/new      | controllers       | post   | new    | ()     | {}    | {}   |
+| /post/view/10   | controllers       | post   | view   | (10,)  | {}  | {}  |
+| /post/move/10/20 | controllers     | post   | move   | (10, 20,) | {} | {} |
+| /post/edit/10?type=draft | controllers | post | edit | (10, ) | {'type': 'draft'} | {} |
 
 
 ### RESTRouter
@@ -218,7 +262,7 @@ Run tests: ```python -m unittest discover```
 
 1. Launch a web server at current directory
 
-    ```python -c 'import guava;guava.server.start_static_server(".")'```
+    ```python -c 'import guava; guava.server.start_static_server()'```
 
     It's the same as
 

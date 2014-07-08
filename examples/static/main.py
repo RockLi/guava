@@ -2,4 +2,4 @@
 
 import guava
 
-guava.server.start_static_server('/')
+guava.server.start_static_server()

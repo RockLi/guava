@@ -80,8 +80,7 @@ PyObject *guava_router_get_best_matched_router(PyObject *routers, PyObject *requ
 
   for (Py_ssize_t i = 0; i < size; ++i) {
       Router *r = (Router *)PyList_GetItem(routers, i);
-      if (r->router->type == GUAVA_ROUTER_CUSTOM) {
-        /* Skip all custom routers */
+      if (r->router->type == GUAVA_ROUTER_CUSTOM) { /* Skip all custom routers */
         continue;
       }
       size_t x = guava_string_common_string_count_from_start(r->router->mount_point, ((Request *)request)->req->url);
