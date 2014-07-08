@@ -74,7 +74,7 @@ Already disabled al
 | guava     |  18799.11 | Memory Leak |
 
 
-The reason why this testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
+The reason why this time of testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
 
 After basic features are finished, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava can be optimized.
 
@@ -129,9 +129,9 @@ For exmaple:
 | /              | controllers       | index  | index  | ()     | {}    | {}   |
 | /post          | controllers       | post   | index  | ()     | {}    | {}   |
 | /post/new      | controllers       | post   | new    | ()     | {}    | {}   |
-| /post/view/10   | controllers       | post   | view   | (10,)  | {}  | {}  |
-| /post/move/10/20 | controllers     | post   | move   | (10, 20,) | {} | {} |
-| /post/edit/10?type=draft | controllers | post | edit | (10, ) | {'type': 'draft'} | {} |
+| /post/view/10   | controllers       | post   | view   | ('10',)  | {}  | {}  |
+| /post/move/10/20 | controllers     | post   | move   | ('10', '20',) | {} | {} |
+| /post/edit/10?type=draft | controllers | post | edit | ('10', ) | {'type': 'draft'} | {} |
 
 
 ### RESTRouter

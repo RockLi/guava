@@ -14,9 +14,9 @@ Assumption:
 | /              | controllers       | index  | index  | ()     | {}    | {}   |
 | /post          | controllers       | post   | index  | ()     | {}    | {}   |
 | /post/new      | controllers       | post   | new    | ()     | {}    | {}   |
-| /post/view/10   | controllers       | post   | view   | (10,)  | {}  | {}  |
-| /post/move/10/20 | controllers     | post   | move   | (10, 20,) | {} | {} |
-| /post/edit/10?type=draft | controllers | post | edit | (10, ) | {'type': 'draft'} | {} |
+| /post/view/10   | controllers       | post   | view   | ('10',)  | {}  | {}  |
+| /post/move/10/20 | controllers     | post   | move   | ('10', '20',) | {} | {} |
+| /post/edit/10?type=draft | controllers | post | edit | ('10', ) | {'type': 'draft'} | {} |
 
 If you want to register some sub applications like /blog is your blog, you can register with two MVCRouters.
 
