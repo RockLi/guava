@@ -275,6 +275,14 @@ Run tests: ```python -m unittest discover```
 Please see my blog.
 
 
+## Acknowledgements
+
+
+1. [Jim Baker](https://github.com/jimbaker)
+
+   Thanks for transfer the ownership of the name "guava" in PyPI. 
+
+
 ## Contributions
 
 To me, all kinds of contributions are welcome.
