@@ -22,22 +22,22 @@ class TestRouterREST(unittest.TestCase):
         req = guava.request.Request(url='/', method='GET')
 
         req.url = '/users/'
-        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_all')
+        self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_all')
 
         req.url = '/users/10'
-        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_one')
+        self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_one')
 
         req.url = '/users/10'
         req.method = 'DELETE'
-        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'delete_one')
+        self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'delete_one')
 
         req.url = '/users/'
         req.method = 'POST'
-        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'create_one')
+        self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'create_one')
 
         req.url = '/users/10'
         req.method = 'PUT'
-        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'update_one')
+        self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'update_one')
 
     def assert_handler(self, handler, package, module, cls, action, args=()):
         self.assertEqual(handler.package, package)
