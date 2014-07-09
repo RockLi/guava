@@ -48,19 +48,20 @@ I did a quick performance testing, all codes are stored in **benchmark** folder.
 If anything is not correct, please kindly to correct me. 
 
 
-Testing Environment:
+**Testing Environment**
 
 EC2: t2.micro 1CPU 0.613GIB EBS
+
 OS: Ubuntu14.04
+
 Benchmark program: [wrk](https://github.com/wg/wrk)
 
 
 1. Helloworld Performance
 
-Command: wrk -t12 -c400 -d30s http://127.0.0.1:8000/
+Command: ```wrk -t12 -c400 -d30s http://127.0.0.1:8000/```
 
-This runs a benchmark for 30 seconds, using 12 threads, and keeping
-400 HTTP connections open.
+This runs a benchmark for 30 seconds, using 12 threads, and keeping 400 HTTP connections open.
 
 Already disabled al
 
@@ -76,7 +77,7 @@ Already disabled al
 
 The reason why this time of testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
 
-After basic features are finished, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava can be optimized.
+After I finished basic features, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava could be optimized.
 
 
 ## Deployment
