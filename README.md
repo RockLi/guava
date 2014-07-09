@@ -70,8 +70,8 @@ Already disabled al
 | Flask     |  595.73 | Actually failed to run the full testing, lots of broken pipe |
 | CherryPy  |  1627.68 |
 | Tornado   |  3373.22 |
-| NodeJS    |  4977.63 |
-| Go        |  20230.32 |
+| NodeJS Raw |  4977.63 |
+| Go Raw |  20230.32 |
 | guava     |  18799.11 | Memory Leak |
 
 
@@ -139,14 +139,15 @@ For exmaple:
 
 This router is especially useful if you want to supply the RESTFul apis.
 
-Method | URL | Class | Action
------- | --- | ----- | ------
-GET    | /users | UsersController | GET
-GET  | /users/10 | UsersController |GET_ONE
-DELETE | /users/10 | UsersController | DELETE
-POST | /users/ | UsersController | POST
-PUT | /users/10 | UsersController |PUT
+| Method | URL | Class | Action |
+| ------ | --- | ----- | ------ |
+| GET    | /users | UsersController | get_all |
+| GET  | /users/10 | UsersController | get_one |
+| DELETE | /users/10 | UsersController | delete_one |
+| POST | /users/ | UsersController | create_one |
+| PUT | /users/10 | UsersController | update_one |
 
+**I havn't thought the best way to handler subresource like this kind of urls ```/users/10/friends/```, after I get a better idea, I will integrate with this feature soon.**
 
 ### Customerize or implement advanced router
 

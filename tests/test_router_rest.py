@@ -19,47 +19,34 @@ class TestRouterREST(unittest.TestCase):
         self.router.mount_point = '/'
 
     def test_route(self):
-        req = guava.request.Request(url='/',
-                                    method='GET')
+        req = guava.request.Request(url='/', method='GET')
 
         req.url = '/users/'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'users')
-        self.assertEqual(handler.cls, 'UsersController')
-        self.assertEqual(handler.action, 'get_all')
+        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_all')
 
         req.url = '/users/10'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'users')
-        self.assertEqual(handler.cls, 'UsersController')
-        self.assertEqual(handler.action, 'get_one')
+        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_one')
 
         req.url = '/users/10'
         req.method = 'DELETE'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'users')
-        self.assertEqual(handler.cls, 'UsersController')
-        self.assertEqual(handler.action, 'delete_one')
+        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'delete_one')
 
         req.url = '/users/'
         req.method = 'POST'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'users')
-        self.assertEqual(handler.cls, 'UsersController')
-        self.assertEqual(handler.action, 'create_one')
-
+        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'create_one')
 
         req.url = '/users/10'
         req.method = 'PUT'
-        handler = self.router.route(req)
-        self.assertEqual(handler.package, '.')
-        self.assertEqual(handler.module, 'users')
-        self.assertEqual(handler.cls, 'UsersController')
-        self.assertEqual(handler.action, 'update_one')
+        assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'update_one')
+
+    def assert_handler(self, handler, package, module, cls, action, args=()):
+        self.assertEqual(handler.package, package)
+        self.assertEqual(handler.module, module)
+        self.assertEqual(handler.cls, cls)
+        self.assertEqual(handler.action, action)
+
+        if args:
+            self.assertEqual(handler.args, args)
 
 
 if __name__ == '__main__':
