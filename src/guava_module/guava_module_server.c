@@ -86,6 +86,36 @@ static PyObject *Server_add_router(Server *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
+static PyObject *Server_route(Server *self, PyObject *args) {
+  PyObject *req = NULL;
+
+  if (!PyArg_ParseTuple(args,
+                        "O",
+                        &req)) {
+    PyErr_SetString(PyExc_TypeError, "error parameter");
+    return NULL;
+  }
+
+  if (!PyObject_TypeCheck(req, &RequestType)) {
+    PyErr_SetString(PyExc_TypeError, "the first parameter must be the request object");
+    return NULL;
+  }
+
+  guava_server_t *server = self->server;
+  if (!server->routers) {
+    Py_RETURN_NONE;
+  }
+
+  PyObject *router = guava_router_get_best_matched_router(server->routers, req);
+  if (!router) {
+    Py_RETURN_NONE;
+  }
+
+
+  Py_RETURN_NONE;
+}
+
+
 static PyObject *Server_repr(Server *self) {
   return PyString_FromFormat("Server listen(%s:%d), backlog(%d), auto_reload(%s), debug(%s)",
                              self->ip,
@@ -93,6 +123,18 @@ static PyObject *Server_repr(Server *self) {
                              self->backlog,
                              self->auto_reload ? "TRUE" : "FALSE",
                              self->server->debug ? "TRUE" : "FALSE");
+}
+
+static PyObject *Server_get_routers(Server *self, void *closure) {
+  guava_server_t *server = self->server;
+
+  if (server->routers) {
+    Py_INCREF(server->routers);
+    return server->routers;
+  } else {
+    Py_RETURN_NONE;
+  }
+
 }
 
 static PyMemberDef Server_members[] = {
@@ -106,8 +148,15 @@ static PyMemberDef Server_members[] = {
 static PyMethodDef Server_methods[] = {
   {"add_router", (PyCFunction)Server_add_router, METH_VARARGS, "add one router"},
   {"serve", (PyCFunction)Server_serve, METH_NOARGS, "start the web server"},
+  {"route", (PyCFunction)Server_route, METH_VARARGS, "get specified handler according different request"},
   {NULL}
 };
+
+static PyGetSetDef Server_getseter[] = {
+  {"routers", (getter)Server_get_routers, NULL, "get routers", NULL},
+  {NULL}
+};
+
 
 static PyTypeObject ServerType = {
   PyObject_HEAD_INIT(NULL)
@@ -140,7 +189,7 @@ static PyTypeObject ServerType = {
   0,                          /* tp_iternext */
   Server_methods,             /* tp_methods */
   Server_members,             /* tp_members */
-  0,                          /* tp_getset */
+  Server_getseter,            /* tp_getset */
   0,                          /* tp_base */
   0,                          /* tp_dict */
   0,                          /* tp_descr_get */

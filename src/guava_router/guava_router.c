@@ -74,21 +74,36 @@ void guava_router_set_routes(guava_router_t *router, PyObject *routes) {
 }
 
 PyObject *guava_router_get_best_matched_router(PyObject *routers, PyObject *request) {
+  /* @todo: Optimize this algorithm */
   Router *router = NULL;
   Py_ssize_t size = PyList_Size(routers);
-  size_t best_length = 0;
+  guava_string_t path = ((Request *)request)->req->url;
+  size_t path_len = guava_string_len(path);
+  char c[1024];
 
-  for (Py_ssize_t i = 0; i < size; ++i) {
-      Router *r = (Router *)PyList_GetItem(routers, i);
-      if (r->router->type == GUAVA_ROUTER_CUSTOM) { /* Skip all custom routers */
-        continue;
+  for (size_t i = path_len; i > 0; --i) {
+    if (path[i-1] == '/' || i == path_len) {
+      memcpy(c, path, i);
+      c[i] = '\0';
+      for (Py_ssize_t j = 0; j < size; ++j) {
+        Router *r = (Router *)PyList_GetItem(routers, j);
+        if (r->router->type == GUAVA_ROUTER_CUSTOM) { /* Skip all custom routers */
+          continue;
+        }
+
+        if ((c[i-1] == '/' && strncmp(r->router->mount_point, c, guava_string_len(r->router->mount_point) - 1) == 0) ||
+            (c[i-1] != '/' && strncmp(r->router->mount_point, c, guava_string_len(r->router->mount_point)) == 0 )) {
+          /* We found the best matched router */
+          router = r;
+          goto result;
+        }
       }
-      size_t x = guava_string_common_string_count_from_start(r->router->mount_point, ((Request *)request)->req->url);
-      if (x >= best_length) {
-        best_length = x;
-        router = r;
-      }
+    } else {
+      continue;
+    }
   }
+
+ result:
 
   return (PyObject *)router;
 }
