@@ -202,16 +202,27 @@ static PyTypeObject ServerType = {
 
 
 static PyObject *server_start_static_server(PyObject *self, PyObject *args, PyObject *kwds) {
+  char *ip = GUAVA_SERVER_DEFAULT_LISTEN_IP;
+  uint16_t port = GUAVA_SERVER_DEFAULT_LISTEN_PORT;
   char *path = ".";
   guava_bool_t allow_index = GUAVA_TRUE;
 
+  static char *kwlist[] = {"ip", "port", "path", "allow_index", NULL};
+
+  fprintf(stdout, "%s, %i, %s, %i\n", ip, port, path, allow_index);
+
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "|sB",
+                                   "|sisB",
+                                   kwlist,
+                                   &ip,
+                                   &port,
                                    &path,
                                    &allow_index)) {
     return NULL;
   }
+
+  fprintf(stdout, "%s, %i, %s, %i\n", ip, port, path, allow_index);
 
   guava_server_t *server = guava_server_new();
 
@@ -224,7 +235,7 @@ static PyObject *server_start_static_server(PyObject *self, PyObject *args, PyOb
   guava_server_add_router(server, (Router *)router);
   Py_DECREF(router);
 
-  guava_server_start(server, GUAVA_SERVER_DEFAULT_LISTEN_IP, GUAVA_SERVER_DEFAULT_LISTEN_PORT, GUAVA_SERVER_DEFAULT_LISTEN_BACKLOG);
+  guava_server_start(server, ip, port, GUAVA_SERVER_DEFAULT_LISTEN_BACKLOG);
 
   Py_RETURN_NONE;
 }

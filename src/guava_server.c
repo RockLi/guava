@@ -93,6 +93,8 @@ void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, i
     guava_server_add_router(server, (Router *)static_router);
   }
 
+  fprintf(stdout, "Listening on %s:%d...\n", ip, port);
+
   uv_loop_init(&server->loop);
 
   uv_tcp_init(&server->loop, &server->server);
