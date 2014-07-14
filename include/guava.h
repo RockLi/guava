@@ -24,7 +24,7 @@
 #define container_of(ptr, type, member)                 \
   ((type *) ((char *) (ptr) - offsetof(type, member)))
 
-#define SERVER_NAME "Guava-0.01DP"
+#define SERVER_NAME "Guava-0.1"
 
 typedef uint8_t guava_bool_t;
 

@@ -67,14 +67,14 @@ guava_module = Extension('guava',
                          extra_objects=['./deps/libuv/.libs/libuv.a'])
 
 setup(name='guava',
-      version='0.1a',
+      version='0.1',
       description='Guava - A super lightweight and high performance web framework for Python',
       author='Rock Lee',
       author_email='insfocus@gmail.com',
       maintainer='Rock Lee',
       maintainer_email='insfocus@gmail.com',
-      url = 'https://github.com/flatpeach/guava',
-      download_url = 'https://github.com/flatpeach/guava/tarball/0.1a'
+      url='https://github.com/flatpeach/guava',
+      download_url='https://github.com/flatpeach/guava/tarball/0.1a',
       ext_modules=[
           guava_module,
       ],

@@ -9,7 +9,7 @@ I wrote an article to explain a little bit of the design of the guava framework,
 
 ## Status
 
-1. Under highly active development. 
+1. Under highly active development.
 2. Haven't release any stable versions, this git repo is the **Developer Preview Version**. Donot use it for production now.
 
 I will release the stable version ASAP. I will also release the traditional web applications built on top of guava.
@@ -45,7 +45,7 @@ For the detailed story and design of the Guava project, please go to [My Blog](h
 
 I did a quick performance testing, all codes are stored in **benchmark** folder.
 
-If anything is not correct, please kindly to correct me. 
+If anything is not correct, please kindly to correct me.
 
 
 **Testing Environment**
@@ -250,6 +250,8 @@ http-parser | http request/response parser for c
 
 ### Install from Git
 
+```git submodule update --init```
+
 ```sudo python setup.py install```
 
 Run tests: ```python -m unittest discover```
@@ -258,6 +260,11 @@ Run tests: ```python -m unittest discover```
 ### Install from github using pip
 
 ```sudo pip install -e git+https://github.com/flatpeach/guava.git#egg=guava```
+
+
+### Install from PyPI
+
+```sudo pip install guava```
 
 
 ## Quick Usage Tricks
@@ -281,7 +288,7 @@ Please see my blog.
 
 1. [Jim Baker](https://github.com/jimbaker)
 
-   Thanks for transfer the ownership of the name "guava" in PyPI. 
+   Thanks for transfer the ownership of the name "guava" in PyPI.
 
 
 ## Contributions

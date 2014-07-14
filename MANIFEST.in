@@ -1,0 +1,6 @@
+include *.txt build.sh
+graft deps
+graft include
+recursive-include *.h *.c *.py
+prune benchmark
+prune examples
