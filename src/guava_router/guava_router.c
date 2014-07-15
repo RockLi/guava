@@ -91,12 +91,12 @@ PyObject *guava_router_get_best_matched_router(PyObject *routers, PyObject *requ
           continue;
         }
 
-        if ((c[i-1] == '/' && strncmp(r->router->mount_point, c, guava_string_len(r->router->mount_point) - 1) == 0) ||
-            (c[i-1] != '/' && strncmp(r->router->mount_point, c, guava_string_len(r->router->mount_point)) == 0 )) {
+        if (strcmp(r->router->mount_point, c) == 0) {
           /* We found the best matched router */
           router = r;
           goto result;
         }
+
       }
     } else {
       continue;
