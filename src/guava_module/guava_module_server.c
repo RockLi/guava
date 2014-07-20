@@ -207,22 +207,18 @@ static PyObject *server_start_static_server(PyObject *self, PyObject *args, PyOb
   char *path = ".";
   guava_bool_t allow_index = GUAVA_TRUE;
 
-  static char *kwlist[] = {"ip", "port", "path", "allow_index", NULL};
-
-  fprintf(stdout, "%s, %i, %s, %i\n", ip, port, path, allow_index);
+  static char *kwlist[] = {"port", "ip", "path", "allow_index", NULL};
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "|sisB",
+                                   "|issB",
                                    kwlist,
-                                   &ip,
                                    &port,
+                                   &ip,
                                    &path,
                                    &allow_index)) {
     return NULL;
   }
-
-  fprintf(stdout, "%s, %i, %s, %i\n", ip, port, path, allow_index);
 
   guava_server_t *server = guava_server_new();
 
