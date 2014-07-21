@@ -82,5 +82,6 @@ void guava_router_static_route(guava_router_static_t *router, guava_request_t *r
     return;
   }
 
-  guava_handler_mark_valid(handler);
+  handler->flags |= GUAVA_HANDLER_VALID;
+  handler->flags |= GUAVA_HANDLER_STATIC;
 }

@@ -17,6 +17,8 @@
 #include "guava_cookie.h"
 #include "guava_memory.h"
 
+#include <assert.h>
+
 static guava_request_method_t guava_request_methods[] = {
   {0, "DELETE"},
   {1, "GET"},
@@ -355,13 +357,8 @@ int guava_request_on_message_complete(http_parser *parser) {
   do {
     router = (Router *)guava_router_get_best_matched_router((PyObject *)server->routers, (PyObject *)request);
     if (router) {
-      if (router->router->type == GUAVA_ROUTER_STATIC) {
-        guava_handler_static(router->router, conn, ((Request *)conn->request)->req, resp, on_write, on_sendfile);
-        break;
-      } else {
-        handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
-        handler->handler->router = router->router;
-      }
+      handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", request);
+      handler->handler->router = router->router;
     }
 
     for (Py_ssize_t i = 0; i < nrouters; ++i) {
@@ -381,7 +378,13 @@ int guava_request_on_message_complete(http_parser *parser) {
       }
     }
 
-    if (!guava_handler_is_valid(handler->handler) || handler->handler->flags & GUAVA_HANDLER_404) {
+    assert(handler != NULL);
+    assert(handler->handler != NULL);
+
+    if (!handler ||
+        !handler->handler ||
+        !guava_handler_is_valid(handler->handler) ||
+        handler->handler->flags & GUAVA_HANDLER_404) {
       guava_response_404(resp, NULL);
       guava_response_send(resp, on_write);
       break;

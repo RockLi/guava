@@ -130,7 +130,25 @@ static int StaticRouter_set_allow_index(StaticRouter *self, PyObject *value, voi
 }
 
 static PyObject *StaticRouter_route(StaticRouter *self, PyObject *args) {
-  Py_RETURN_NONE;
+  PyObject *req;
+
+  if (!PyArg_ParseTuple(args, "O", &req)) {
+    PyErr_SetString(PyExc_TypeError, "request object needed");
+    return NULL;
+  }
+
+  guava_handler_t *handler = guava_handler_new();
+  guava_router_static_route((guava_router_static_t *)self->router.router, ((Request *)req)->req, handler);
+
+  if (!guava_handler_is_valid(handler)) {
+    guava_handler_free(handler);
+    Py_RETURN_NONE;
+  }
+
+  StaticHandler *handler_obj = PyObject_New(StaticHandler, &StaticHandlerType);
+  handler_obj->handler = handler;
+
+  return (PyObject *)handler_obj;
 }
 
 static PyGetSetDef StaticRouter_getseter[] = {

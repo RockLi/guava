@@ -56,6 +56,112 @@ class TestRouter(unittest.TestCase):
             '/about': about_handler,
         })
 
+    def test_multiple_mvc_router(self):
+        server = guava.server.Server()
+
+        router1 = guava.router.MVCRouter("/", package='controllers')
+        router2 = guava.router.MVCRouter("/admin/", package='controllers.admin')
+        router3 = guava.router.MVCRouter("/blog/", package='controllers.blog')
+        router4 = guava.router.MVCRouter("/admin/blog/", package='controllers.admin.blog')
+        router5 = guava.router.MVCRouter("/cms/", package='controllers.cms')
+        router6 = guava.router.MVCRouter("/cms/admin/", package='controllers.cms.admin')
+        router7 = guava.router.StaticRouter("/static", directory="./static")
+
+        server.add_router(router1, router2, router3,
+                          router4, router5, router6,
+                          router7)
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/")),
+                            'controllers',
+                            'index',
+                            'IndexController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/index/abc")),
+                            'controllers',
+                            'index',
+                            'IndexController',
+                            'abc')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/abc")),
+                            'controllers',
+                            'abc',
+                            'AbcController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/abc/defg")),
+                            'controllers',
+                            'abc',
+                            'AbcController',
+                            'defg')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin")),
+                            'controllers',
+                            'admin',
+                            'AdminController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin/")),
+                            'controllers.admin',
+                            'index',
+                            'IndexController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/blog/abc")),
+                            'controllers.blog',
+                            'abc',
+                            'AbcController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin/blog/")),
+                            'controllers.admin.blog',
+                            'index',
+                            'IndexController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin/blog/abc")),
+                            'controllers.admin.blog',
+                            'abc',
+                            'AbcController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin/blog/abc/")),
+                            'controllers.admin.blog',
+                            'abc',
+                            'AbcController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/admin/blog/abc/defg")),
+                            'controllers.admin.blog',
+                            'abc',
+                            'AbcController',
+                            'defg')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/cms/admin/")),
+                            'controllers.cms.admin',
+                            'index',
+                            'IndexController',
+                            'index')
+
+        self.assert_handler(server.route(guava.request.Request(method="GET", url="/cms/")),
+                            'controllers.cms',
+                            'index',
+                            'IndexController',
+                            'index')
+
+        #handler = server.route(guava.request.Request(method="GET", url="/static/1.jpg"))
+        #self.assertTrue(handler.is_static())
+
+
+
+    def assert_handler(self, handler, package, module, cls, action, args=()):
+        self.assertEqual(handler.package, package)
+        self.assertEqual(handler.module, module)
+        self.assertEqual(handler.cls, cls)
+        self.assertEqual(handler.action, action)
+        if args:
+            self.assertEqual(handler.args, args)
+
 
 if __name__ == '__main__':
     unittest.main()

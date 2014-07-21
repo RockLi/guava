@@ -12,6 +12,7 @@
 #define GUAVA_HANDLER_VALID 1<<0
 #define GUAVA_HANDLER_404 1<<1
 #define GUAVA_HANDLER_REDIRECT 1<<2
+#define GUAVA_HANDLER_STATIC 1<<3
 
 guava_handler_t *guava_handler_new(void);
 

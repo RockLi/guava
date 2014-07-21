@@ -106,11 +106,42 @@ static PyObject *Server_route(Server *self, PyObject *args) {
     Py_RETURN_NONE;
   }
 
-  PyObject *router = guava_router_get_best_matched_router(server->routers, req);
-  if (!router) {
-    Py_RETURN_NONE;
-  }
+  Py_ssize_t nrouters = PyList_Size(server->routers);
+  Handler *handler = NULL;
 
+  Router *router = (Router *)guava_router_get_best_matched_router(server->routers, req);
+
+  do {
+    if (!router) {
+      break;
+    }
+
+    handler = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", req);
+    handler->handler->router = router->router;
+
+    for (Py_ssize_t i = 0; i < nrouters; ++i) {
+      router = (Router *)PyList_GetItem(server->routers, i);
+      if (router->router->type != GUAVA_ROUTER_CUSTOM) {
+        /*
+         * Cause we already try to get the best matched router
+         * But we still need to pass the custome router in case use defined some speciall routes
+         */
+        continue;
+      }
+      Handler *h = (Handler *)PyObject_CallMethod((PyObject *)router, "route", "(O)", req);
+      if ((PyObject *)h != Py_None) {
+        handler = h;
+        handler->handler->router = router->router;
+        break;
+      }
+    }
+
+    if (!handler || !handler->handler) {
+      break;
+    }
+
+    return (PyObject *)handler;
+  } while (0);
 
   Py_RETURN_NONE;
 }
