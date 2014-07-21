@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Guava : A super lightweight and high performance web framework for Python written in C" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Guava</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/flatpeach/guava">View on GitHub</a>
+
+          <h1 id="project_title">Guava</h1>
+          <h2 id="project_tagline">A super lightweight and high performance web framework for Python written in C</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/flatpeach/guava/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/flatpeach/guava/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="guava-" class="anchor" href="#guava-"><span class="octicon octicon-link"></span></a>Guava <a href="https://travis-ci.org/flatpeach/guava"><img src="https://travis-ci.org/flatpeach/guava.svg" alt="Build Status"></a>
+</h1>
+
+<p>Guava is a super lightweight and high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. Keep in mind, this project is not to revent the wheel.</p>
+
+<p>If you don't like the features Guava supplied, you can use the underlying structures like <strong>router</strong>, <strong>session</strong>, <strong>request</strong>, <strong>response</strong>, <strong>builtin web server</strong> to construct your own web framework with the benifits of high performance which guava gives you.</p>
+
+<p>I wrote an article to explain a little bit of the design of the guava framework, <a href="http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/">Link</a>.</p>
+
+<h2>
+<a name="status" class="anchor" href="#status"><span class="octicon octicon-link"></span></a>Status</h2>
+
+<ol>
+<li>Under highly active development.</li>
+<li>Haven't release any stable versions, this git repo is the <strong>Developer Preview Version</strong>. Donot use it for production now.</li>
+</ol><p>I will release the stable version ASAP. I will also release the traditional web applications built on top of guava.</p>
+
+<p>Anyways, you can evaluate it, hack it in advance. Don't forget to star it if you think guava can help you in the future. :)</p>
+
+<p>If you want to contribute, please see the contribution section.</p>
+
+<p>I will try my best to keep this README.md up to date, any time it's better if you can read the source codes.</p>
+
+<h2>
+<a name="philosophy-of-guava" class="anchor" href="#philosophy-of-guava"><span class="octicon octicon-link"></span></a>Philosophy of Guava</h2>
+
+<p>For the detailed story and design of the Guava project, please go to <a href="http://www.code-trick.com">My Blog</a>.</p>
+
+<ol>
+<li>High performance</li>
+<li>Prefer convention over configuration</li>
+<li>Lightweight, only do what one web framework should do</li>
+<li>Super scalability</li>
+</ol><h2>
+<a name="main-features" class="anchor" href="#main-features"><span class="octicon octicon-link"></span></a>Main Features</h2>
+
+<ol>
+<li>Asynchorous, build on top of libuv</li>
+<li>Builtin HTTP webserver</li>
+<li>Builtin routers: Router, StaticRouter, MVCRouter, RESTFulRouter</li>
+<li>Session Management: InMemory, Local FileSystem, Remote(SSO)</li>
+<li>Everything is extensible</li>
+</ol><h2>
+<a name="performance" class="anchor" href="#performance"><span class="octicon octicon-link"></span></a>Performance</h2>
+
+<p>I did a quick performance testing, all codes are stored in <strong>benchmark</strong> folder.</p>
+
+<p>If anything is not correct, please kindly to correct me.</p>
+
+<p><strong>Testing Environment</strong></p>
+
+<p>EC2: t2.micro 1CPU 0.613GIB EBS</p>
+
+<p>OS: Ubuntu14.04</p>
+
+<p>Benchmark program: <a href="https://github.com/wg/wrk">wrk</a></p>
+
+<ol>
+<li>Helloworld Performance</li>
+</ol><p>Command: <code>wrk -t12 -c400 -d30s http://127.0.0.1:8000/</code></p>
+
+<p>This runs a benchmark for 30 seconds, using 12 threads, and keeping 400 HTTP connections open.</p>
+
+<p>Already disabled al</p>
+
+<table>
+<thead><tr>
+<th>Framework</th>
+<th>Requests/s</th>
+<th>Explaination</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Flask</td>
+<td>595.73</td>
+<td>Actually failed to run the full testing, lots of broken pipe</td>
+</tr>
+<tr>
+<td>CherryPy</td>
+<td>1627.68</td>
+<td></td>
+</tr>
+<tr>
+<td>Tornado</td>
+<td>3373.22</td>
+<td></td>
+</tr>
+<tr>
+<td>NodeJS Raw</td>
+<td>4977.63</td>
+<td></td>
+</tr>
+<tr>
+<td>Go Raw</td>
+<td>20230.32</td>
+<td></td>
+</tr>
+<tr>
+<td>guava</td>
+<td>18799.11</td>
+<td>Memory Leak</td>
+</tr>
+</tbody>
+</table><p>The reason why this time of testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.</p>
+
+<p>After I finished basic features, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava could be optimized.</p>
+
+<h2>
+<a name="deployment" class="anchor" href="#deployment"><span class="octicon octicon-link"></span></a>Deployment</h2>
+
+<h3>
+<a name="deploy-behind-of-nginxapache" class="anchor" href="#deploy-behind-of-nginxapache"><span class="octicon octicon-link"></span></a>Deploy behind of Nginx/Apache</h3>
+
+<pre><code>------------                                ----------------------
+| WebServer | &lt;&lt;-- Reversed Proxy Rule --&gt;&gt; | Guava HTTP Server |
+------------                                ----------------------
+</code></pre>
+
+<h3>
+<a name="no-nginxapache" class="anchor" href="#no-nginxapache"><span class="octicon octicon-link"></span></a>No Nginx/Apache</h3>
+
+<p>The performance of the Guava builtin web server is good enough for serving as the standalone web server. But till now I haven't spend so much time on the security part, so maybe it's not the best time to choose this kind of deployment.</p>
+
+<h2>
+<a name="router" class="anchor" href="#router"><span class="octicon octicon-link"></span></a>Router</h2>
+
+<p>Guava has four builtin routers trying to simplify your life. For detailed documentation, please refer to the doc directory in this repo.</p>
+
+<p>Each router has one mount point. All routers will composite the tree like structures. The concept of mount point is for you easily group you sub applications.</p>
+
+<h3>
+<a name="staticrouter" class="anchor" href="#staticrouter"><span class="octicon octicon-link"></span></a>StaticRouter</h3>
+
+<p>StaticRouter is dedicated for serving static resources, for example: css, javascript files or images.</p>
+
+<pre><code>static_router = guava.router.StaticRouter(mount_point="/static",
+                                          directory="my_static_dir",
+                                          allow_index=True)
+</code></pre>
+
+<h3>
+<a name="mvcrouter" class="anchor" href="#mvcrouter"><span class="octicon octicon-link"></span></a>MVCRouter</h3>
+
+<p>This could be set as the default router, if your application is such a typical one.</p>
+
+<pre><code>mvc_router = guava.router.MVCRouter(mount_point="/")
+</code></pre>
+
+<p>For exmaple:</p>
+
+<table>
+<thead><tr>
+<th>URL</th>
+<th>Package</th>
+<th>Module</th>
+<th>Action</th>
+<th>Args</th>
+<th>GET</th>
+<th>POST</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>/</td>
+<td>controllers</td>
+<td>index</td>
+<td>index</td>
+<td>()</td>
+<td>{}</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>/post</td>
+<td>controllers</td>
+<td>post</td>
+<td>index</td>
+<td>()</td>
+<td>{}</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>/post/new</td>
+<td>controllers</td>
+<td>post</td>
+<td>new</td>
+<td>()</td>
+<td>{}</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>/post/view/10</td>
+<td>controllers</td>
+<td>post</td>
+<td>view</td>
+<td>('10',)</td>
+<td>{}</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>/post/move/10/20</td>
+<td>controllers</td>
+<td>post</td>
+<td>move</td>
+<td>('10', '20',)</td>
+<td>{}</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>/post/edit/10?type=draft</td>
+<td>controllers</td>
+<td>post</td>
+<td>edit</td>
+<td>('10', )</td>
+<td>{'type': 'draft'}</td>
+<td>{}</td>
+</tr>
+</tbody>
+</table><h3>
+<a name="restrouter" class="anchor" href="#restrouter"><span class="octicon octicon-link"></span></a>RESTRouter</h3>
+
+<p>This router is especially useful if you want to supply the RESTFul apis.</p>
+
+<table>
+<thead><tr>
+<th>Method</th>
+<th>URL</th>
+<th>Class</th>
+<th>Action</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/users</td>
+<td>UsersController</td>
+<td>get_all</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/users/10</td>
+<td>UsersController</td>
+<td>get_one</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/users/10</td>
+<td>UsersController</td>
+<td>delete_one</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/users/</td>
+<td>UsersController</td>
+<td>create_one</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/users/10</td>
+<td>UsersController</td>
+<td>update_one</td>
+</tr>
+</tbody>
+</table><p><strong>I havn't thought the best way to handler subresource like this kind of urls <code>/users/10/friends/</code>, after I get a better idea, I will integrate with this feature soon.</strong></p>
+
+<h3>
+<a name="customerize-or-implement-advanced-router" class="anchor" href="#customerize-or-implement-advanced-router"><span class="octicon octicon-link"></span></a>Customerize or implement advanced router</h3>
+
+<p>If above routers can not match all of your requirements, you can use CustomRouter to build or overwrite complex routes</p>
+
+<pre><code>custom_router = guava.router.Router({
+    "/about": guava.handler.Handler(package='.',
+                                    module='misc',
+                                    controller='MiscController',
+                                    action='about')
+})
+</code></pre>
+
+<pre><code>class MySpecialRouter(guava.router.Router):
+
+    def __init__(self):
+        self.register('/hello',
+                      guava.handler.Handler(package='.',
+                                            module='misc',
+                                            controller='MiscController',
+                                            action='hello'))
+
+    def route(self, req):
+        if req.path == '/me' and req.GET['name'] == 'rock':
+            return guava.handler.Handler(package='.',
+                                         module='me',
+                                         controller='MeController',
+                                         action='show')
+
+        return None
+
+</code></pre>
+
+<h2>
+<a name="controller" class="anchor" href="#controller"><span class="octicon octicon-link"></span></a>Controller</h2>
+
+<p>All your controllers should inherit from <code>guava.controller.Controller</code>.</p>
+
+<h2>
+<a name="session" class="anchor" href="#session"><span class="octicon octicon-link"></span></a>Session</h2>
+
+<p>Guava already builtin two kinds of Session store solutions, one is in memory store, the other is file based store. If you want to support SSO and try to store session in MC, Redis or databases, you need to create a new class inherited from the builtin session store.</p>
+
+<h3>
+<a name="inmemory-store" class="anchor" href="#inmemory-store"><span class="octicon octicon-link"></span></a>InMemory Store</h3>
+
+<p>This is specially useful for debugging purpose. Each time you restarted the guava web server, all data in this kind of session store will be dropped.</p>
+
+<pre><code>session_store = guava.session.SessionStore(type=guava.session.Mem)
+</code></pre>
+
+<h3>
+<a name="file-based-store" class="anchor" href="#file-based-store"><span class="octicon octicon-link"></span></a>File Based Store</h3>
+
+<pre><code>session_store = guava.session.SessionStore(type=guava.session.File)
+</code></pre>
+
+<h3>
+<a name="custom-the-session-store" class="anchor" href="#custom-the-session-store"><span class="octicon octicon-link"></span></a>Custom the Session Store</h3>
+
+<p>If you want to implement the SSO, you need the central based session storage solution by using Redis, memcache, database or other brokers to store the session data.</p>
+
+<pre><code>class RedisSessionStore(guava.session.SessionStore):
+
+    def __init__(self, *args, **kwargs)):
+        super(MySessionStore, self).__init__(*args, **kwargs)
+
+    def set(self, sid, value):
+        pass
+
+    def get(self, sid):
+        pass
+
+    def delete(self, sid):
+        pass
+
+    def clear(self, sid):
+        pass
+
+</code></pre>
+
+<p>You need to implement the four placeholder functions to build your own session store solution.</p>
+
+<h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<table>
+<thead><tr>
+<th>Project</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>libuv</td>
+<td>Cross-platform asychronous I/O library</td>
+</tr>
+<tr>
+<td>http-parser</td>
+<td>http request/response parser for c</td>
+</tr>
+</tbody>
+</table><h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<h3>
+<a name="install-from-git" class="anchor" href="#install-from-git"><span class="octicon octicon-link"></span></a>Install from Git</h3>
+
+<p><code>git submodule update --init</code></p>
+
+<p><code>sudo python setup.py install</code></p>
+
+<p>Run tests: <code>python -m unittest discover</code></p>
+
+<h3>
+<a name="install-from-github-using-pip" class="anchor" href="#install-from-github-using-pip"><span class="octicon octicon-link"></span></a>Install from github using pip</h3>
+
+<p><code>sudo pip install -e git+https://github.com/flatpeach/guava.git#egg=guava</code></p>
+
+<h3>
+<a name="install-from-pypi" class="anchor" href="#install-from-pypi"><span class="octicon octicon-link"></span></a>Install from PyPI</h3>
+
+<p><code>sudo pip install guava</code></p>
+
+<h2>
+<a name="quick-usage-tricks" class="anchor" href="#quick-usage-tricks"><span class="octicon octicon-link"></span></a>Quick Usage Tricks</h2>
+
+<ol>
+<li>
+<p>Launch a web server at current directory</p>
+
+<p><code>python -c 'import guava; guava.server.start_static_server()'</code></p>
+
+<p>It's the same as</p>
+
+<p><code>python -m SimpleHTTPServer</code></p>
+</li>
+</ol><h2>
+<a name="performance-1" class="anchor" href="#performance-1"><span class="octicon octicon-link"></span></a>Performance</h2>
+
+<p>Please see my blog.</p>
+
+<h2>
+<a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<ol>
+<li>
+<p><a href="https://github.com/jimbaker">Jim Baker</a></p>
+
+<p>Thanks for transfer the ownership of the name "guava" in PyPI.</p>
+</li>
+</ol><h2>
+<a name="contributions" class="anchor" href="#contributions"><span class="octicon octicon-link"></span></a>Contributions</h2>
+
+<p>To me, all kinds of contributions are welcome.</p>
+
+<ol>
+<li>Contribute to the core codes</li>
+<li>Testcases</li>
+<li>Examples</li>
+<li>Documentation</li>
+<li>Website or the Logo for the Guava project</li>
+<li>Even request for new features!</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Guava maintained by <a href="https://github.com/flatpeach">flatpeach</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
