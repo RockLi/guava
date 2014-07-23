@@ -75,6 +75,8 @@ typedef struct {
 
 extern PyTypeObject HandlerType;
 
+extern PyTypeObject RedirectHandlerType;
+
 extern PyTypeObject StaticHandlerType;
 
 extern PyTypeObject RouterType;

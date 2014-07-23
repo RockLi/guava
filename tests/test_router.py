@@ -149,9 +149,8 @@ class TestRouter(unittest.TestCase):
                             'IndexController',
                             'index')
 
-        #handler = server.route(guava.request.Request(method="GET", url="/static/1.jpg"))
-        #self.assertTrue(handler.is_static())
-
+        handler = server.route(guava.request.Request(method="GET", url="/static/1.jpg"))
+        self.assertTrue(isinstance(handler, guava.handler.StaticHandler))
 
 
     def assert_handler(self, handler, package, module, cls, action, args=()):
