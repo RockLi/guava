@@ -164,7 +164,21 @@ static PyObject *Controller_set_status_code(Controller *self, PyObject *args) {
 }
 
 static PyObject *Controller_redirect(Controller *self, PyObject *args) {
-  Py_RETURN_NONE;
+  guava_response_t *resp = self->resp;
+
+  char *url = NULL;
+  if (!PyArg_ParseTuple(args, "s", &url)) {
+    PyErr_SetString(PyExc_TypeError, "error parameter");
+    return NULL;
+  }
+
+  if (!url) {
+    Py_RETURN_FALSE;
+  }
+
+  guava_response_302(resp, url);
+
+  Py_RETURN_TRUE;
 }
 
 static PyObject *Controller_hook_before_action(Controller *self, PyObject *args) {
