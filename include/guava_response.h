@@ -9,6 +9,11 @@
 
 #include "guava.h"
 
+typedef struct {
+  int         code;
+  const char *desc;
+} guava_status_code_t;
+
 guava_response_t *guava_response_new(void);
 
 void guava_response_free(guava_response_t *resp);

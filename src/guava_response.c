@@ -9,6 +9,87 @@
 #include "guava_module.h"
 #include "guava_memory.h"
 
+static guava_status_code_t guava_status_codes[] = {
+  {100, "Continue"},
+  {101, "Switching Protocols"},
+  {102, "Processing"},
+
+  {200, "OK"},
+  {201, "Created"},
+  {202, "Accepted"},
+  {203, "Non-Authoritative Information"},
+  {204, "No Content"},
+  {205, "Reset Content"},
+  {206, "Partial Content"},
+  {207, "Multi-Status"},
+  {208, "Already Reported"},
+  {226, "IM Used"},
+
+  {300, "Multiple Choices"},
+  {301, "Moved Permanently"},
+  {302, "Found"},
+  {303, "See Other"},
+  {304, "Not Modified"},
+  {305, "Use Proxy"},
+  {306, "Switch Proxy"},
+  {307, "Temporary Redirect"},
+  {308, "Permanent Redirect"},
+
+  {400, "Bad Request"},
+  {401, "Unauthorized"},
+  {402, "Payment Required"},
+  {403, "Forbidden"},
+  {404, "Not Found"},
+  {405, "Method Not Allowed"},
+  {406, "Not Acceptable"},
+  {407, "Proxy Authentication Required"},
+  {408, "Request Timeout"},
+  {409, "Conflict"},
+  {410, "Gone"},
+  {411, "Length Required"},
+  {412, "Precondition Failed"},
+  {413, "Request Entity Too Large"},
+  {414, "Request-URI Too Long"},
+  {415, "Unsupported Media Type"},
+  {416, "Requested Range Not Satisfiable"},
+  {417, "Expectation Failed"},
+  {418, "I'm a teapot"},
+  {419, "Authentication Timeout"},
+  {422, "Unprocessable Entity"},
+  {423, "Locked"},
+  {424, "Failed Dependency"},
+  {426, "Upgrade Required"},
+  {428, "Precondition Required"},
+  {429, "Too Many Requests"},
+  {431, "Request Header Fields Too Large"},
+  {440, "Login Timeout"},
+  {444, "No Response"},
+  {449, "Retry With"},
+  {450, "Blocked by Windows Parental Controls"},
+  {451, "Redirect"},
+  {494, "Request Header Too Large"},
+  {495, "Cert Error"},
+  {496, "No Cert"},
+  {497, "HTTP to HTTPS"},
+  {498, "Token expired/invalid"},
+  {499, "Client Closed Request"},
+  {499, "Token required"},
+
+  {500, "Internal Server Error"},
+  {501, "Not Implemented"},
+  {502, "Bad Gateway"},
+  {503, "Service Unavailable"},
+  {504, "Gateway Timeout"},
+  {505, "HTTP Version Not Supported"},
+  {506, "Variant Also Negotiates"},
+  {507, "Insufficient Storage"},
+  {508, "Loop Detected"},
+  {509, "Bandwidth Limit Exceeded"},
+  {510, "Not Extended"},
+  {511, "Network Authentication Required"},
+  {520, "Origin Error"}
+};
+
 guava_response_t *guava_response_new(void) {
   guava_response_t *resp = (guava_response_t *)guava_malloc(sizeof(guava_response_t));
   if (!resp) {
@@ -86,9 +167,23 @@ void guava_response_write_data(guava_response_t *resp, const char *data) {
   resp->data = guava_string_append_raw(resp->data, data);
 }
 
+const char *guava_status_code_desc(int code) {
+  for (size_t i = 0; i < sizeof(guava_status_codes) / sizeof(guava_status_codes[0]); ++i) {
+    if (guava_status_codes[i].code == code) {
+      return guava_status_codes[i].desc;
+    }
+  }
+
+  return NULL;
+}
+
 guava_string_t guava_response_serialize(guava_response_t *resp) {
   char buf[1024];
-  snprintf(buf, sizeof(buf), "HTTP/%d.%d %d\r\n", resp->major, resp->minor, resp->status_code);
+  snprintf(buf, sizeof(buf), "HTTP/%d.%d %d %s\r\n",
+           resp->major,
+           resp->minor,
+           resp->status_code,
+           guava_status_code_desc(resp->status_code));
 
   guava_string_t s = guava_string_append_raw(NULL, buf);
 
