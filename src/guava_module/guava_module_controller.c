@@ -262,11 +262,26 @@ static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
   return self->req->COOKIES;
 }
 
+static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
+  if (!self->req) {
+    return PyDict_New();
+  }
+
+  if (!self->req->headers) {
+    self->req->headers = PyDict_New();
+  }
+
+  Py_INCREF(self->req->headers);
+
+  return self->req->headers;
+}
+
 static PyGetSetDef Controller_getseter[] = {
   {"COOKIES", (getter)Controller_get_COOKIES, NULL, "COOKIES", NULL},
   {"GET", (getter)Controller_get_GET, NULL, "GET", NULL},
   {"POST", (getter)Controller_get_POST, NULL, "POST", NULL},
   {"SESSION", (getter)Controller_get_SESSION, NULL, "SESSION", NULL},
+  {"HEADERS", (getter)Controller_get_HEADERS, NULL, "HEADERS", NULL},
   {NULL}
 };
 
