@@ -11,16 +11,6 @@
 #include "guava_module_router.h"
 #include "guava_memory.h"
 
-typedef struct {
-  PyObject_HEAD
-
-  guava_server_t *server;
-
-  char *ip;
-  int port;
-  int backlog;
-  char auto_reload;
-} Server;
 
 static PyObject *Server_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Server *self;

@@ -267,13 +267,13 @@ static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
     return PyDict_New();
   }
 
-  if (!self->req->headers) {
-    self->req->headers = PyDict_New();
+  if (!self->req->HEADERS) {
+    self->req->HEADERS = PyDict_New();
   }
 
-  Py_INCREF(self->req->headers);
+  Py_INCREF(self->req->HEADERS);
 
-  return self->req->headers;
+  return self->req->HEADERS;
 }
 
 static PyGetSetDef Controller_getseter[] = {

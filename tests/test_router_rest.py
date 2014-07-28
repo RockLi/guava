@@ -19,24 +19,19 @@ class TestRouterREST(unittest.TestCase):
         self.router.mount_point = '/'
 
     def test_route(self):
-        req = guava.request.Request(url='/', method='GET')
-
-        req.url = '/users/'
+        req = guava.request.Request(url='/users/', method='GET')
         self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_all')
 
-        req.url = '/users/10'
+        req = guava.request.Request(url='/users/10', method='GET')
         self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'get_one')
 
-        req.url = '/users/10'
-        req.method = 'DELETE'
+        req = guava.request.Request(url='/users/10', method='DELETE')
         self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'delete_one')
 
-        req.url = '/users/'
-        req.method = 'POST'
+        req = guava.request.Request(url='/users/', method='POST')
         self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'create_one')
 
-        req.url = '/users/10'
-        req.method = 'PUT'
+        req = guava.request.Request(url='/users/10', method='PUT')
         self.assert_handler(self.router.route(req), '.', 'users', 'UsersController', 'update_one')
 
     def assert_handler(self, handler, package, module, cls, action, args=()):

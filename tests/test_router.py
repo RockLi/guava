@@ -30,17 +30,16 @@ class TestRouter(unittest.TestCase):
         })
 
     def test_route(self):
-        req = guava.request.Request()
-        req.url = '/about'
-        req.method = 'GET'
+        req = guava.request.Request(url='/about', method='GET')
         self.assertEqual(self.router.route(req), self.about_handler)
 
-        req.url = '/me'
+        req = guava.request.Request(url='/me', method='GET')
         self.assertEqual(self.router.route(req), self.me_handler)
 
-        req.url = '/404'
+        req = guava.request.Request(url='/404', method='GET')
         self.assertEqual(self.router.route(req), None)
-        req.url = '/about_new'
+
+        req = guava.request.Request(url='/about_new', method='GET')
         self.assertEqual(self.router.route(req), None)
 
     def test_router_init_with_routes(self):

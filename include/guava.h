@@ -94,11 +94,12 @@ typedef struct {
 } guava_handler_t;
 
 typedef struct {
-  uv_loop_t    loop;
-  uv_tcp_t     server;
-  uv_signal_t  signal;
-  PyObject    *routers;
-  guava_bool_t debug;
+  uv_loop_t     loop;
+  uv_tcp_t      server;
+  uv_signal_t   signal;
+  PyObject     *routers;
+  PyObject     *middlewares;
+  guava_bool_t  debug;
 } guava_server_t;
 
 typedef struct {
@@ -106,11 +107,11 @@ typedef struct {
   uint16_t        minor;
   uint8_t         method;
   uint8_t         keep_alive;
-  PyObject       *headers;
   guava_string_t  url;
   guava_string_t  body;
   guava_string_t  path;
   guava_string_t  host;
+  PyObject       *HEADERS;
   PyObject       *GET; /* Dict for storing the get parameters */
   PyObject       *POST; /* Dict for storing the post parameters */
   PyObject       *COOKIES;

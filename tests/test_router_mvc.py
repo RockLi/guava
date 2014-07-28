@@ -19,24 +19,20 @@ class TestRouterMVC(unittest.TestCase):
         self.router.mount_point = '/'
 
     def test_router(self):
-        req = guava.request.Request()
-        req.method = 'GET'
-
-        req.url = '/'
+        req = guava.request.Request(method='GET', url='/')
         self.assert_handler(self.router.route(req), '.', 'index', 'IndexController', 'index')
 
-        req.url = '/about'
+        req = guava.request.Request(method='GET', url='/about')
         self.assert_handler(self.router.route(req), '.', 'about', 'AboutController', 'index')
 
-        req.url = '/about/hello'
+        req = guava.request.Request(method='GET', url='/about/hello')
         self.assert_handler(self.router.route(req), '.', 'about', 'AboutController', 'hello')
 
-        req.url = '/post/view/10'
+        req = guava.request.Request(method='GET', url='/post/view/10')
         self.assert_handler(self.router.route(req), '.', 'post', 'PostController', 'view', ('10',))
 
-        req.url = '/post/move/10/20'
+        req = guava.request.Request(method='GET', url='/post/move/10/20')
         self.assert_handler(self.router.route(req), '.', 'post', 'PostController', 'move', ('10', '20'))
-
 
     def assert_handler(self, handler, package, module, cls, action, args=()):
         self.assertEqual(handler.package, package)

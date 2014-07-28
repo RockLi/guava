@@ -40,15 +40,11 @@ class TestCustomRouter(unittest.TestCase):
         self.assertEqual(handler.action, 'index')
 
     def test_route(self):
-        req = guava.request.Request()
-        req.url = '/me'
-        req.method = 'GET'
-
+        req = guava.request.Request(url='/me', method='GET')
         handler = self.router.route(req)
         self.assertEqual(handler, None)
 
-        req.url = '/about'
-
+        req = guava.request.Request(url='/about', method='GET')
         handler = self.router.route(req)
         self.assertNotEqual(handler, None)
         self.assertEqual(handler.package, '.')

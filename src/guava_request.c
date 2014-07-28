@@ -64,8 +64,8 @@ guava_request_t *guava_request_new(void) {
   req->host = NULL;
   req->body = NULL;
 
-  req->headers = PyDict_New();
-  if (!req->headers) {
+  req->HEADERS = PyDict_New();
+  if (!req->HEADERS) {
     guava_free(req);
     return NULL;
   }
@@ -76,14 +76,14 @@ guava_request_t *guava_request_new(void) {
 
   req->GET = PyDict_New();
   if (!req->GET) {
-    Py_DECREF(req->headers);
+    Py_DECREF(req->HEADERS);
     guava_free(req);
     return NULL;
   }
 
   req->POST = PyDict_New();
   if (!req->POST) {
-    Py_DECREF(req->headers);
+    Py_DECREF(req->HEADERS);
     Py_DECREF(req->GET);
     guava_free(req);
     return NULL;
@@ -91,7 +91,7 @@ guava_request_t *guava_request_new(void) {
 
   req->COOKIES = PyDict_New();
   if (!req->COOKIES) {
-    Py_DECREF(req->headers);
+    Py_DECREF(req->HEADERS);
     Py_DECREF(req->GET);
     Py_DECREF(req->POST);
     guava_free(req);
@@ -122,9 +122,9 @@ void guava_request_free(guava_request_t *req) {
     req->body = NULL;
   }
 
-  if (req->headers) {
-    Py_DECREF(req->headers);
-    req->headers = NULL;
+  if (req->HEADERS) {
+    Py_DECREF(req->HEADERS);
+    req->HEADERS = NULL;
   }
 
   if (req->GET) {
@@ -243,7 +243,7 @@ int guava_request_on_header_value(http_parser *parser, const char *buf, size_t l
 
   if (conn->auxiliary_last_was_header && conn->auxiliary_current_header) {
     PyObject *v = PyString_FromStringAndSize(buf, len);
-    PyDict_SetItemString(request->req->headers, conn->auxiliary_current_header, v);
+    PyDict_SetItemString(request->req->HEADERS, conn->auxiliary_current_header, v);
     Py_DECREF(v);
     guava_string_free(conn->auxiliary_current_header);
     conn->auxiliary_current_header = NULL;
@@ -268,12 +268,12 @@ int guava_request_on_headers_complete(http_parser *parser) {
   conn->auxiliary_current_header = NULL;
   conn->auxiliary_last_was_header = 0;
 
-  PyObject *host = PyDict_GetItemString(request->req->headers, "Host");
+  PyObject *host = PyDict_GetItemString(request->req->HEADERS, "Host");
   if (host) {
     request->req->host = guava_string_new(PyString_AsString(host));
   }
 
-  PyObject *cookie = PyDict_GetItemString(request->req->headers, "Cookie");
+  PyObject *cookie = PyDict_GetItemString(request->req->HEADERS, "Cookie");
   if (cookie) {
     char *p = PyString_AsString(cookie);
     char **data = (char **)&p;
@@ -293,7 +293,7 @@ int guava_request_on_body(http_parser *parser, const char *buf, size_t len) {
   if (len) {
     request->req->body = guava_string_append_raw_size(request->req->body, buf, len);
 
-    PyObject *content_type = PyDict_GetItemString(request->req->headers, "Content-Type");
+    PyObject *content_type = PyDict_GetItemString(request->req->HEADERS, "Content-Type");
     if (content_type) {
       char *form_data = request->req->body;
       char **p = &form_data;
@@ -507,8 +507,6 @@ int guava_request_on_message_complete(http_parser *parser) {
     Py_DECREF(c);
     guava_response_send(resp, on_write);
   } while(0);
-
- cleanup:
 
   Py_XDECREF(handler);
   Py_XDECREF(conn->request);

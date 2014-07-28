@@ -28,14 +28,14 @@ static void Request_dealloc(Request *self) {
 }
 
 static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
-  static char *kwlist[] = {"url", "path", "host", "method", "body", "headers", "GET", "POST", NULL};
+  static char *kwlist[] = {"url", "path", "host", "method", "body", "HEADERS", "GET", "POST", NULL};
 
   char *url = NULL;
   char *path = NULL;
   char *host = NULL;
   char *method = NULL;
   char *body = NULL;
-  PyObject *headers = NULL;
+  PyObject *HEADERS = NULL;
   PyObject *GET = NULL;
   PyObject *POST = NULL;
 
@@ -48,7 +48,7 @@ static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
                                    &host,
                                    &method,
                                    &body,
-                                   &headers,
+                                   &HEADERS,
                                    &GET,
                                    &POST
                                    )) {
@@ -79,9 +79,9 @@ static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
     self->req->body = guava_string_new(body);
   }
 
-  if (headers) {
-    Py_INCREF(headers);
-    self->req->headers = headers;
+  if (HEADERS) {
+    Py_INCREF(HEADERS);
+    self->req->HEADERS = HEADERS;
   }
 
   if (GET) {
@@ -103,29 +103,6 @@ static PyObject *Request_get_method(Request *self, void *closure) {
   return PyString_FromString(http_method_str(req->method));
 }
 
-static int Request_set_method(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the method attribute");
-    return -1;
-  }
-
-  if (!PyString_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The method attribute value must be a string");
-    return -1;
-  }
-
-  int8_t method = guava_request_get_method(PyString_AsString(value));
-
-  if (method == -1) {
-    PyErr_SetString(PyExc_TypeError, "Unknown HTTP method");
-    return -1;
-  }
-
-  req->method = method;
-  return 0;
-}
-
 static PyObject *Request_get_url(Request *self, void *closure) {
   guava_request_t *req = self->req;
 
@@ -134,28 +111,6 @@ static PyObject *Request_get_url(Request *self, void *closure) {
   }
 
   Py_RETURN_NONE;
-}
-
-static int Request_set_url(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the url attribute");
-    return -1;
-  }
-
-  if (!PyString_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The url attribute value must be a string");
-    return -1;
-  }
-
-  if (req->url) {
-    guava_string_free(req->url);
-  }
-
-  req->url = guava_string_new(PyString_AsString(value));
-  guava_request_extract_from_url(req);
-
-  return 0;
 }
 
 static PyObject *Request_get_host(Request *self, void *closure) {
@@ -168,27 +123,6 @@ static PyObject *Request_get_host(Request *self, void *closure) {
   Py_RETURN_NONE;
 }
 
-static int Request_set_host(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the host attribute");
-    return -1;
-  }
-
-  if (!PyString_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The host attribute value must be a string");
-    return -1;
-  }
-
-  if (req->host) {
-    guava_string_free(req->host);
-  }
-
-  req->host = guava_string_new(PyString_AsString(value));
-  return 0;
-}
-
-
 static PyObject *Request_get_body(Request *self, void *closure) {
   guava_request_t *req = self->req;
 
@@ -197,26 +131,6 @@ static PyObject *Request_get_body(Request *self, void *closure) {
   }
 
   Py_RETURN_NONE;
-}
-
-static int Request_set_body(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the body attribute");
-    return -1;
-  }
-
-  if (!PyString_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The body attribute value must be a string");
-    return -1;
-  }
-
-  if (req->body) {
-    guava_string_free(req->body);
-  }
-
-  req->body = guava_string_new(PyString_AsString(value));
-  return 0;
 }
 
 static PyObject *Request_get_GET(Request *self, void *closure) {
@@ -229,27 +143,6 @@ static PyObject *Request_get_GET(Request *self, void *closure) {
   Py_RETURN_NONE;
 }
 
-static int Request_set_GET(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the GET attribute");
-    return -1;
-  }
-
-  if (!PyDict_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The GET attribute value must be a dict");
-    return -1;
-  }
-
-  if (req->GET) {
-    Py_DECREF(req->GET);
-  }
-
-  req->GET = value;
-  Py_INCREF(value);
-  return 0;
-}
-
 static PyObject *Request_get_POST(Request *self, void *closure) {
   guava_request_t *req = self->req;
   if (req->POST) {
@@ -258,28 +151,6 @@ static PyObject *Request_get_POST(Request *self, void *closure) {
   }
 
   Py_RETURN_NONE;
-}
-
-static int Request_set_POST(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the POST attribute");
-    return -1;
-  }
-
-  if (!PyDict_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The POST attribute value must be a dict");
-    return -1;
-  }
-
-  if (req->POST) {
-    Py_DECREF(req->POST);
-  }
-
-  req->POST = value;
-  Py_INCREF(value);
-
-  return 0;
 }
 
 static PyObject *Request_get_COOKIES(Request *self, void *closure) {
@@ -292,55 +163,11 @@ static PyObject *Request_get_COOKIES(Request *self, void *closure) {
   Py_RETURN_NONE;
 }
 
-static int Request_set_COOKIES(Request *self, PyObject *value, void *closure) {
+static PyObject *Request_get_HEADERS(Request *self, void *closure) {
   guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the COOKIES attribute");
-    return -1;
-  }
+  Py_INCREF(req->HEADERS);
 
-  if (!PyDict_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The COOKIES attribute value must be a dict");
-    return -1;
-  }
-
-  if (req->COOKIES) {
-    Py_DECREF(req->COOKIES);
-  }
-
-  req->COOKIES = value;
-  Py_INCREF(value);
-
-  return 0;
-}
-
-static PyObject *Request_get_headers(Request *self, void *closure) {
-  guava_request_t *req = self->req;
-  Py_INCREF(req->headers);
-
-  return req->headers;
-}
-
-static int Request_set_headers(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the headers attribute");
-    return -1;
-  }
-
-  if (!PyDict_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The headers attribute value must be a dict");
-    return -1;
-  }
-
-  if (req->headers) {
-    Py_DECREF(req->headers);
-  }
-
-  req->headers = value;
-  Py_INCREF(value);
-
-  return 0;
+  return req->HEADERS;
 }
 
 static PyObject *Request_get_path(Request *self, void *closure) {
@@ -353,37 +180,16 @@ static PyObject *Request_get_path(Request *self, void *closure) {
   Py_RETURN_NONE;
 }
 
-static int Request_set_path(Request *self, PyObject *value, void *closure) {
-  guava_request_t *req = self->req;
-  if (value == NULL)  {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the path attribute");
-    return -1;
-  }
-
-  if (!PyString_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "The path attribute value must be a string");
-    return -1;
-  }
-
-  if (req->path) {
-    guava_string_free(req->path);
-  }
-
-  req->path = guava_string_new(PyString_AsString(value));
-
-  return 0;
-}
-
 static PyGetSetDef Request_getseter[] = {
-  {"method", (getter)Request_get_method, (setter)Request_set_method, "method", NULL},
-  {"url", (getter)Request_get_url, (setter)Request_set_url, "url", NULL},
-  {"path", (getter)Request_get_path, (setter)Request_set_path, "path", NULL},
-  {"host", (getter)Request_get_host, (setter)Request_set_host, "host", NULL},
-  {"body", (getter)Request_get_body, (setter)Request_set_body, "body", NULL},
-  {"headers", (getter)Request_get_headers, (setter)Request_set_headers, "headers", NULL},
-  {"GET", (getter)Request_get_GET, (setter)Request_set_GET, "GET", NULL},
-  {"POST", (getter)Request_get_POST, (setter)Request_set_POST, "POST", NULL},
-  {"COOKIES", (getter)Request_get_COOKIES, (setter)Request_set_COOKIES, "COOKIES", NULL},
+  {"method", (getter)Request_get_method, NULL, "method", NULL},
+  {"url", (getter)Request_get_url, NULL, "url", NULL},
+  {"path", (getter)Request_get_path, NULL, "path", NULL},
+  {"host", (getter)Request_get_host, NULL, "host", NULL},
+  {"body", (getter)Request_get_body, NULL, "body", NULL},
+  {"HEADERS", (getter)Request_get_HEADERS, NULL, "HEADERS", NULL},
+  {"GET", (getter)Request_get_GET, NULL, "GET", NULL},
+  {"POST", (getter)Request_get_POST, NULL, "POST", NULL},
+  {"COOKIES", (getter)Request_get_COOKIES, NULL, "COOKIES", NULL},
   {NULL}
 };
 

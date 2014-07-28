@@ -15,6 +15,17 @@
 typedef struct {
   PyObject_HEAD
 
+  guava_server_t *server;
+
+  char *ip;
+  int port;
+  int backlog;
+  char auto_reload;
+} Server;
+
+typedef struct {
+  PyObject_HEAD
+
   guava_router_t *router;
 } Router;
 
