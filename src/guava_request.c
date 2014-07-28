@@ -453,22 +453,33 @@ int guava_request_on_message_complete(http_parser *parser) {
     c->router = handler->handler->router;
 
     PyObject *r = NULL;
-    if (handler->handler->args) {
-      r = PyObject_CallMethod((PyObject *)c, handler->handler->action, "O", handler->handler->args);
-    } else {
-      r = PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL);
-    }
 
-    if (!r) {
-      Py_DECREF(c);
-      if (PyErr_Occurred()) {
-        PyErr_Print();
+    do {
+
+      r = PyObject_CallMethod((PyObject *)c, "before_action", NULL);
+      if (!r) {
+        goto process_500;
       }
-      fprintf(stderr, "failed to execute action: %s\n", handler->handler->action);
-      guava_response_500(resp, NULL);
-      guava_response_send(resp, on_write);
-      break;
-    }
+      /* @todo: check we could stop here in advance */
+
+      if (handler->handler->args) {
+        r = PyObject_CallMethod((PyObject *)c, handler->handler->action, "O", handler->handler->args);
+      } else {
+        r = PyObject_CallMethod((PyObject *)c, handler->handler->action, NULL);
+      }
+
+      if (!r) {
+        goto process_500;
+      }
+
+      /* @todo: check whether we could stop here */
+
+      r = PyObject_CallMethod((PyObject *)c, "after_action", NULL);
+      if (!r) {
+        goto process_500;
+      }
+
+    } while (0);
 
     if (handler->handler->router->session_store && c->SESSION) {
       guava_request_t *r = ((Request *)conn->request)->req;
@@ -484,10 +495,20 @@ int guava_request_on_message_complete(http_parser *parser) {
       guava_session_set(handler->handler->router->session_store, sid, c->SESSION);
     }
 
-    Py_DECREF(c);
+    goto send;
 
+  process_500:
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+    }
+    guava_response_500(resp, NULL);
+
+  send:
+    Py_DECREF(c);
     guava_response_send(resp, on_write);
   } while(0);
+
+ cleanup:
 
   Py_XDECREF(handler);
   Py_XDECREF(conn->request);

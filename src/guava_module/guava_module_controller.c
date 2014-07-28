@@ -181,11 +181,11 @@ static PyObject *Controller_redirect(Controller *self, PyObject *args) {
   Py_RETURN_TRUE;
 }
 
-static PyObject *Controller_hook_before_action(Controller *self, PyObject *args) {
+static PyObject *Controller_before_action(Controller *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
-static PyObject *Controller_hook_after_action(Controller *self, PyObject *args) {
+static PyObject *Controller_after_action(Controller *self, PyObject *args) {
   Py_RETURN_NONE;
 }
 
@@ -295,10 +295,8 @@ static PyMethodDef Controller_methods[] = {
   {"write", (PyCFunction)Controller_write, METH_VARARGS, "write the data to client"},
   {"set_status_code", (PyCFunction)Controller_set_status_code, METH_VARARGS, "set the response status code"},
   {"redirect", (PyCFunction)Controller_redirect, METH_VARARGS, "redirect to another url"},
-  /* begin hooks definition */
-  {"hook_before_action", (PyCFunction)Controller_hook_before_action, METH_NOARGS, ""},
-  {"hook_after_action", (PyCFunction)Controller_hook_after_action, METH_NOARGS, ""},
-  /* end hooks definition */
+  {"before_action", (PyCFunction)Controller_before_action, METH_NOARGS, "called before execute the action"},
+  {"after_action", (PyCFunction)Controller_after_action, METH_NOARGS, "called after executed the action"},
   {NULL}
 };
 

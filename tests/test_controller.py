@@ -24,8 +24,8 @@ class TestController(unittest.TestCase):
         self.assertTrue(c.write != None)
         self.assertTrue(c.set_status_code != None)
         self.assertTrue(c.redirect != None)
-        self.assertTrue(c.hook_before_action != None)
-        self.assertTrue(c.hook_after_action != None)
+        self.assertTrue(c.before_action != None)
+        self.assertTrue(c.after_action != None)
         self.assertTrue(c.set_cookie != None)
 
         self.assertEqual(c.GET, {})
