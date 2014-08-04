@@ -103,6 +103,21 @@ static PyObject *Request_get_method(Request *self, void *closure) {
   return PyString_FromString(http_method_str(req->method));
 }
 
+static int Request_set_method(Request *self, PyObject *value, void *closure) {
+  MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the method property");
+
+  guava_request_t *req = self->req;
+
+  if (!PyString_Check(value)) {
+    PyErr_SetString(PyExc_TypeError, "the method attribute must be string");
+    return -1;
+  }
+
+  req->method = guava_request_get_method(PyString_AsString(value));
+
+  return 0;
+}
+
 static PyObject *Request_get_url(Request *self, void *closure) {
   guava_request_t *req = self->req;
 
@@ -112,6 +127,17 @@ static PyObject *Request_get_url(Request *self, void *closure) {
 
   Py_RETURN_NONE;
 }
+
+static int Request_set_url(Request *self, PyObject *value, void *closure) {
+  MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the url property");
+
+
+
+
+
+  return 0;
+}
+
 
 static PyObject *Request_get_host(Request *self, void *closure) {
   guava_request_t *req = self->req;
@@ -181,15 +207,16 @@ static PyObject *Request_get_path(Request *self, void *closure) {
 }
 
 static PyGetSetDef Request_getseter[] = {
-  {"method", (getter)Request_get_method, NULL, "method", NULL},
-  {"url", (getter)Request_get_url, NULL, "url", NULL},
-  {"path", (getter)Request_get_path, NULL, "path", NULL},
-  {"host", (getter)Request_get_host, NULL, "host", NULL},
-  {"body", (getter)Request_get_body, NULL, "body", NULL},
-  {"HEADERS", (getter)Request_get_HEADERS, NULL, "HEADERS", NULL},
-  {"GET", (getter)Request_get_GET, NULL, "GET", NULL},
-  {"POST", (getter)Request_get_POST, NULL, "POST", NULL},
-  {"COOKIES", (getter)Request_get_COOKIES, NULL, "COOKIES", NULL},
+  {"method", (getter)Request_get_method, (setter)Request_set_method, "method", NULL},
+  {"url", (getter)Request_get_url, (setter)Request_set_url, "url", NULL},
+  {"path", (getter)Request_get_path, (setter)Request_set_path, "path", NULL},
+  {"host", (getter)Request_get_host, (setter)Request_set_host, "host", NULL},
+  {"body", (getter)Request_get_body, (setter)Request_set_body, "body", NULL},
+  {"HEADERS", (getter)Request_get_HEADERS, (setter)Request_set_HEADERS, "HEADERS", NULL},
+  {"GET", (getter)Request_get_GET, (setter)Request_set_GET, "GET", NULL},
+  {"POST", (getter)Request_get_POST, (setter)Request_set_POST, "POST", NULL},
+  {"COOKIES", (getter)Request_get_COOKIES, (setter)Request_set_COOKIES, "COOKIES", NULL},
+  {"SESSION", (getter)Request_get_SESSION, (setter)Request_set_SESSION, "SESSIONS", NULL},
   {NULL}
 };
 

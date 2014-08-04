@@ -16,10 +16,8 @@ static PyObject *Controller_new(PyTypeObject *type, PyObject *args, PyObject *kw
 
   self = (Controller *)type->tp_alloc(type, 0);
   if (self) {
-    self->resp = NULL;
-    self->owned_resp = NULL;
     self->req = NULL;
-    self->owned_req = NULL;
+    self->res = NULL;
     self->SESSION = NULL;
   }
 
@@ -27,17 +25,15 @@ static PyObject *Controller_new(PyTypeObject *type, PyObject *args, PyObject *kw
 }
 
 static void Controller_dealloc(Controller *self) {
-  if (self->owned_resp) {
-    Py_DECREF(self->owned_resp);
-    self->owned_resp = NULL;
+  if (self->req) {
+    Py_DECREF(self->req);
+    self->req = NULL;
   }
-  self->resp = NULL;
 
-  if (self->owned_req) {
-    Py_DECREF(self->owned_req);
-    self->owned_req = NULL;
+  if (self->res) {
+    Py_DECREF(self->res);
+    self->res = NULL;
   }
-  self->req = NULL;
 
   if (self->SESSION) {
     Py_DECREF(self->SESSION);
@@ -48,52 +44,51 @@ static void Controller_dealloc(Controller *self) {
 }
 
 static int Controller_init(Controller *self, PyObject *args, PyObject *kwds) {
-  PyObject *resp = NULL;
-  PyObject *req = NULL;
-  if (!PyArg_ParseTuple(args, "|OO", &resp, &req)) {
-    return -1;
-  }
-
-  if (resp) {
-    Py_INCREF(resp);
-    self->resp = ((Response *)resp)->resp;
-    self->owned_resp = resp;
-  }
-
-  if (req) {
-    Py_INCREF(req);
-    self->req = ((Request *)req)->req;
-    self->owned_req = req;
-  }
-
+  self->req = NULL;
+  self->res = NULL;
   self->SESSION = NULL;
+
   return 0;
 }
 
 static PyObject *Controller_set_header(Controller *self, PyObject *args) {
-  guava_response_t *resp = self->resp;
+  if (!self->res) {
+    PyErr_SetString(PyExc_TypeError, "Internal Response object is NULL");
+    return NULL;
+  }
+
+  guava_response_t *resp = self->res->resp;
 
   char *key;
   char *value;
 
   if (!PyArg_ParseTuple(args, "ss", &key, &value)) {
-    PyErr_SetString(PyExc_TypeError, "give correct parameters");
+    PyErr_SetString(PyExc_TypeError, "type error");
     return NULL;
   }
 
   guava_response_set_header(resp, key, value);
+
   Py_RETURN_TRUE;
 }
 
 static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObject *kwds) {
-  static char *kwlist[] = {"name", "value", "path", "domain", "secure", "httponly", "expired", "max_age", NULL};
+  if (!self->res) {
+    PyErr_SetString(PyExc_TypeError, "Internal Response object is NULL");
+    return NULL;
+  }
 
-  guava_response_t *resp = self->resp;
+  static char *kwlist[] = {"name", "value", "path", "domain",
+                           "secure", "httponly", "expired", "max_age",
+                           NULL};
+
+  guava_response_t *resp = self->res->resp;
 
   char *name = NULL;
   char *value = NULL;
   char *path = NULL;
   char *domain = NULL;
+
   int secure = GUAVA_FALSE;
   int httponly = GUAVA_FALSE;
   int expired = -1;
@@ -111,7 +106,6 @@ static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObjec
                                    &httponly,
                                    &expired,
                                    &max_age)) {
-
     PyErr_SetString(PyExc_TypeError, "please give correct parameters");
     return NULL;
   }
@@ -125,7 +119,6 @@ static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObjec
                                              secure,
                                              httponly);
 
-
   guava_response_set_cookie(resp, name, (PyObject *)cookie);
 
   Py_DECREF(cookie);
@@ -134,7 +127,12 @@ static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObjec
 }
 
 static PyObject *Controller_write(Controller *self, PyObject *args) {
-  guava_response_t *resp = self->resp;
+  if (!self->res) {
+    PyErr_SetString(PyExc_TypeError, "Internal Response object is NULL");
+    return NULL;
+  }
+
+  guava_response_t *resp = self->res->resp;
 
   char *data;
   if (!PyArg_ParseTuple(args, "s", &data)) {
@@ -148,25 +146,35 @@ static PyObject *Controller_write(Controller *self, PyObject *args) {
 }
 
 static PyObject *Controller_set_status_code(Controller *self, PyObject *args) {
-  guava_response_t *resp = self->resp;
+  if (!self->res) {
+    PyErr_SetString(PyExc_TypeError, "Internal Response object is NULL");
+    return NULL;
+  }
 
-  int status_code;
+  guava_response_t *resp = self->res->resp;
+
+  int status_code = 200;
 
   if (!PyArg_ParseTuple(args, "i", &status_code)) {
     PyErr_SetString(PyExc_TypeError, "error parameter");
     return NULL;
   }
 
-  /* check the status code range */
   guava_response_set_status_code(resp, status_code);
 
   Py_RETURN_TRUE;
 }
 
 static PyObject *Controller_redirect(Controller *self, PyObject *args) {
-  guava_response_t *resp = self->resp;
+  if (!self->res) {
+    PyErr_SetString(PyExc_TypeError, "Internal Response object is NULL");
+    return NULL;
+  }
+
+  guava_response_t *resp = self->res->resp;
 
   char *url = NULL;
+
   if (!PyArg_ParseTuple(args, "s", &url)) {
     PyErr_SetString(PyExc_TypeError, "error parameter");
     return NULL;
@@ -190,6 +198,11 @@ static PyObject *Controller_after_action(Controller *self, PyObject *args) {
 }
 
 static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
+  if (!self->req) {
+    PyErr_SetString(PyExc_TypeError, "Internal Request object is NULL");
+    return NULL;
+  }
+
   if (self->SESSION == NULL) {
     if (self->router->session_store) {
       Cookie *id = NULL;
@@ -222,6 +235,11 @@ static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
 
 static PyObject *Controller_get_GET(Controller *self, void *closure) {
   if (!self->req) {
+    PyErr_SetString(PyExc_TypeError, "Internal Request object is NULL");
+    return NULL;
+  }
+
+  if (!self->req) {
     return PyDict_New();
   }
 
@@ -235,6 +253,11 @@ static PyObject *Controller_get_GET(Controller *self, void *closure) {
 }
 
 static PyObject *Controller_get_POST(Controller *self, void *closure) {
+  if (!self->req) {
+    PyErr_SetString(PyExc_TypeError, "Internal Request object is NULL");
+    return NULL;
+  }
+
   if (!self->req) {
     return PyDict_New();
   }
@@ -250,6 +273,11 @@ static PyObject *Controller_get_POST(Controller *self, void *closure) {
 
 static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
   if (!self->req) {
+    PyErr_SetString(PyExc_TypeError, "Internal Request object is NULL");
+    return NULL;
+  }
+
+  if (!self->req) {
     return PyDict_New();
   }
 
@@ -264,6 +292,11 @@ static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
 
 static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
   if (!self->req) {
+    PyErr_SetString(PyExc_TypeError, "Internal Request object is NULL");
+    return NULL;
+  }
+
+  if (!self->req) {
     return PyDict_New();
   }
 
@@ -274,6 +307,42 @@ static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
   Py_INCREF(self->req->HEADERS);
 
   return self->req->HEADERS;
+}
+
+static PyObject *Controller_set_request(Controller *self, PyObject *args) {
+  PyObject *req = NULL;
+
+  if (!PyArg_ParseTuple(args, "O", &req)) {
+    PyErr_SetString(PyExc_TypeError, "type error");
+    return NULL;
+  }
+
+  if (self->req) {
+    Py_DECREF(self->req);
+    self->req = NULL;
+  }
+
+  self->req = req;
+
+  Py_RETURN_NONE;
+}
+
+static PyObject *Controller_set_response(Controller *self, PyObject *args) {
+  PyObject *res = NULL;
+
+  if (!PyArg_ParseTuple(args, "O", &res)) {
+    PyErr_SetString(PyExc_TypeError, "type error");
+    return NULL;
+  }
+
+  if (self->res) {
+    Py_DECREF(self->res);
+    self->res = NULL;
+  }
+
+  self->res = res;
+
+  Py_RETURN_NONE;
 }
 
 static PyGetSetDef Controller_getseter[] = {
@@ -292,11 +361,17 @@ static PyMemberDef Controller_members[] = {
 static PyMethodDef Controller_methods[] = {
   {"set_header", (PyCFunction)Controller_set_header, METH_VARARGS, "set the response header"},
   {"set_cookie", (PyCFunction)Controller_set_cookie, METH_VARARGS, "set the response cookie"},
-  {"write", (PyCFunction)Controller_write, METH_VARARGS, "write the data to client"},
   {"set_status_code", (PyCFunction)Controller_set_status_code, METH_VARARGS, "set the response status code"},
+  {"write", (PyCFunction)Controller_write, METH_VARARGS, "write the data to client"},
   {"redirect", (PyCFunction)Controller_redirect, METH_VARARGS, "redirect to another url"},
   {"before_action", (PyCFunction)Controller_before_action, METH_NOARGS, "called before execute the action"},
   {"after_action", (PyCFunction)Controller_after_action, METH_NOARGS, "called after executed the action"},
+
+  /* private functions */
+  {"_set_request", (PyCFunction)Controller_set_request, METH_VARARGS, "set the internal request object of the controller"},
+  {"_set_response", (PyCFunction)Controller_set_response, METH_VARARGS, "set the internal response object of the controller"},
+  /* end private functions */
+
   {NULL}
 };
 

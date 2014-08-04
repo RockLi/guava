@@ -29,6 +29,23 @@ guava_sources =[ SRC_FOLDER + name for name in [
     'guava_memory.c',
 ]]
 
+guava_module_sources = [ SRC_FOLDER + 'guava_module/' + name for name in [
+    'controller.c',
+    'cookie.c',
+    'handler/handler.c',
+    'handler/redirect.c',
+    'handler/static.c',
+    'module.c',
+    'request.c',
+    'response/response.c',
+    'router/mvc.c',
+    'router/rest.c',
+    'router/router.c',
+    'router/static.c',
+    'server.c',
+    'session.c',
+]]
+
 http_parser_include = ['deps/http-parser']
 http_parser_files = ['deps/http-parser/http_parser.c']
 
@@ -47,21 +64,7 @@ if os.environ.get('GUAVA_DEBUG', None):
     macros += [('GUAVA_MEM_DEBUG', 1)]
 
 guava_module = Extension('guava',
-                         sources=guava_sources + http_parser_files + [
-                             SRC_FOLDER + 'guava_module/guava_module_request.c',
-                             SRC_FOLDER + 'guava_module/guava_module_server.c',
-                             SRC_FOLDER + 'guava_module/guava_module_handler.c',
-                             SRC_FOLDER + 'guava_module/guava_module_handler_redirect.c',
-                             SRC_FOLDER + 'guava_module/guava_module_handler_static.c',
-                             SRC_FOLDER + 'guava_module/guava_module_controller.c',
-                             SRC_FOLDER + 'guava_module/guava_module_router.c',
-                             SRC_FOLDER + 'guava_module/guava_module_router_static.c',
-                             SRC_FOLDER + 'guava_module/guava_module_router_mvc.c',
-                             SRC_FOLDER + 'guava_module/guava_module_router_rest.c',
-                             SRC_FOLDER + 'guava_module/guava_module_session.c',
-                             SRC_FOLDER + 'guava_module/guava_module.c',
-                             SRC_FOLDER + 'guava_module/guava_module_cookie.c',
-                         ],
+                         sources=guava_sources + http_parser_files + guava_module_sources,
                          include_dirs=['./include/'] + http_parser_include + libuv_include,
                          libraries=[] + libraries,
                          define_macros=macros,
@@ -70,7 +73,7 @@ guava_module = Extension('guava',
 
 setup(name='guava',
       version='0.1',
-      description='Guava - A super lightweight and high performance web framework for Python',
+      description='Guava - A lightweight and high performance web framework for Python written in C',
       author='Rock Lee',
       author_email='insfocus@gmail.com',
       maintainer='Rock Lee',

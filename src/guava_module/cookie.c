@@ -14,8 +14,7 @@ PyObject *Cookie_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
   Cookie *self;
 
   self = (Cookie *)type->tp_alloc(type, 0);
-  if (self) {
-  }
+  if (self) {}
 
   return (PyObject *)self;
 }

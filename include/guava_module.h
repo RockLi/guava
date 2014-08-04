@@ -62,17 +62,14 @@ typedef struct {
 typedef struct {
   PyObject_HEAD
 
-  guava_response_t *resp;
+  guava_response_t *res;
 } Response;
 
 typedef struct {
   PyObject_HEAD
 
-  guava_response_t *resp;
-  PyObject         *owned_resp;
-
-  guava_request_t  *req;
-  PyObject         *owned_req;
+  PyObject         *req;
+  PyObject         *res;
 
   PyObject         *SESSION;
   guava_router_t   *router;
@@ -99,5 +96,14 @@ extern PyTypeObject ControllerType;
 extern PyTypeObject CookieType;
 
 extern PyObject *Handler_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+
+#define MODULE_SETTER_CHECK_PROPERTY_DELETE(msg)        \
+  do {                                                  \
+    if (value == NULL) {                                \
+      PyErr_SetString(PyExc_TypeError, (msg))           \
+        return -1;                                      \
+    }                                                   \
+  } while(0)
+
 
 #endif /* !__GUAVA_MODULE_H__ */
