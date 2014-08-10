@@ -65,14 +65,14 @@ This runs a benchmark for 30 seconds, using 12 threads, and keeping 400 HTTP con
 
 Already disabled al
 
-| Framework |  Requests/s | Explaination |
+| Framework |  Requests/s | Notes |
 | --------- | ----------- | ------------ |
-| Flask     |  595.73 | Actually failed to run the full testing, lots of broken pipe |
+| Flask     |  595.73 | Actually failed to run the full testing |
 | CherryPy  |  1627.68 |
 | Tornado   |  3373.22 |
 | NodeJS Raw |  4977.63 |
 | Go Raw |  20230.32 |
-| guava     |  18799.11 | Memory Leak |
+| guava     |  18799.11 |  |
 
 
 The reason why this time of testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
@@ -125,14 +125,14 @@ mvc_router = guava.router.MVCRouter(mount_point="/")
 
 For exmaple:
 
-|       URL      |     Package       | Module | Action |  Args  |  GET  | POST |
+|       URL      |     Package       | Class | Module | Action |  Args  |  GET  | POST |
 | -------------- | ----------------- | ------ | ------ | ------ | ----- | ---- |
-| /              | controllers       | index  | index  | ()     | {}    | {}   |
-| /post          | controllers       | post   | index  | ()     | {}    | {}   |
-| /post/new      | controllers       | post   | new    | ()     | {}    | {}   |
-| /post/view/10   | controllers       | post   | view   | ('10',)  | {}  | {}  |
-| /post/move/10/20 | controllers     | post   | move   | ('10', '20',) | {} | {} |
-| /post/edit/10?type=draft | controllers | post | edit | ('10', ) | {'type': 'draft'} | {} |
+| /              | controllers       | IndexController | index  | index  | ()     | {}    | {}   |
+| /post          | controllers       | IndexController | post   | index  | ()     | {}    | {}   |
+| /post/new      | controllers       | IndexController | post   | new    | ()     | {}    | {}   |
+| /post/view/10   | controllers       | IndexController | post   | view   | ('10',)  | {}  | {}  |
+| /post/move/10/20 | controllers     | IndexController | post   | move   | ('10', '20',) | {} | {} |
+| /post/edit/10?type=draft | controllers | IndexController | post | edit | ('10', ) | {'type': 'draft'} | {} |
 
 
 ### RESTRouter
