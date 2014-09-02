@@ -27,6 +27,7 @@ guava_sources =[ SRC_FOLDER + name for name in [
     'guava_session/guava_session_store_file.c',
     'guava_cookie.c',
     'guava_memory.c',
+    'guava_url.c',
 ]]
 
 http_parser_include = ['deps/http-parser']

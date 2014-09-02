@@ -16,6 +16,7 @@
 #include "guava_session/guava_session.h"
 #include "guava_cookie.h"
 #include "guava_memory.h"
+#include "guava_url.h"
 
 #include <assert.h>
 
@@ -571,7 +572,9 @@ char *guava_request_parse_form_data(char **data, guava_string_t *name, guava_str
   }
 
   *name = guava_string_new_size(name_start, name_end - name_start);
-  *value = guava_string_new_size(value_start, value_end - value_start);
+  guava_string_t v = guava_string_new_size(value_start, value_end - value_start);
+  *value = guava_url_decode(v);
+  guava_string_free(v);
 
   return *data;
 }
