@@ -1,34 +1,30 @@
 # Guava [![Build Status](https://travis-ci.org/flatpeach/guava.svg)](https://travis-ci.org/flatpeach/guava)
 
-Guava is a super lightweight and high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks. Keep in mind, this project is not to revent the wheel.
+Guava is a super lightweight and high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks.
+
+Keep in mind, this project is not to revent the wheel.
 
 If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to construct your own web framework with the benifits of high performance which guava gives you.
 
-I wrote an article to explain a little bit of the design of the guava framework, [Link](http://code-trick.com/guava-a-super-lightweight-high-performance-web-framework-for-python-written-in-c/).
-
+You can check out the detailed explaination of guava in my blog. [Link](http://code-trick.com)
 
 ## Status
 
-1. Under highly active development.
-2. Haven't release any stable versions, this git repo is the **Developer Preview Version**. Donot use it for production now.
+1. Active development
 
-I will release the stable version ASAP. I will also release the traditional web applications built on top of guava.
+I will release the stable version ASAP.
 
 Anyways, you can evaluate it, hack it in advance. Don't forget to star it if you think guava can help you in the future. :)
 
 If you want to contribute, please see the contribution section.
 
-I will try my best to keep this README.md up to date, any time it's better if you can read the source codes.
-
 
 ## Philosophy of Guava
-
-For the detailed story and design of the Guava project, please go to [My Blog](http://www.code-trick.com).
 
 1. High performance
 2. Prefer convention over configuration
 3. Lightweight, only do what one web framework should do
-4. Super scalability
+4. Scalability
 
 
 ## Main Features
@@ -77,7 +73,9 @@ Already disabled al
 
 The reason why this time of testing guava didn't win Go is due to some known but unfixed bugs in guava, I will fix that soon and rerun the testing.
 
-After I finished basic features, I will focus on the optimization part, continously to improve the performance. To be honest, there're lots of places in guava could be optimized.
+After I finished basic features, I will focus on the optimization part, continously to improve the performance.
+
+To be honest, there're lots of places in guava could be optimized.
 
 
 ## Deployment
@@ -126,7 +124,7 @@ mvc_router = guava.router.MVCRouter(mount_point="/")
 For exmaple:
 
 |       URL      |     Package       | Class | Module | Action |  Args  |  GET  | POST |
-| -------------- | ----------------- | ------ | ------ | ------ | ----- | ---- |
+| -------------- | ----------------- | ------ | ------ | ------ | ----- | ---- | ---- |
 | /              | controllers       | IndexController | index  | index  | ()     | {}    | {}   |
 | /post          | controllers       | IndexController | post   | index  | ()     | {}    | {}   |
 | /post/new      | controllers       | IndexController | post   | new    | ()     | {}    | {}   |
@@ -147,7 +145,8 @@ This router is especially useful if you want to supply the RESTFul apis.
 | POST | /users/ | UsersController | create_one |
 | PUT | /users/10 | UsersController | update_one |
 
-**I havn't thought the best way to handler subresource like this kind of urls ```/users/10/friends/```, after I get a better idea, I will integrate with this feature soon.**
+**I havn't find the best way to handler subresource like this kind of urls ```/users/10/friends/```, after I get a better idea,
+I will integrate with this feature soon.**
 
 ### Customerize or implement advanced router
 
