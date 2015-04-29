@@ -19,7 +19,8 @@ static guava_mime_type_t mime_types[] = {
   {"png", "image/png"},
   {"gif", "image/gif"},
   {"jpg", "image/jpeg"},
-  {"jpeg", "image/jpeg"}
+  {"jpeg", "image/jpeg"},
+  {"ico", "image/x-icon"},
 };
 
 const char *guava_mime_type_guess(const char *filename) {
@@ -30,7 +31,7 @@ const char *guava_mime_type_guess(const char *filename) {
 
   for (int i = 0; i < sizeof(mime_types) / sizeof(mime_types[0]); ++i) {
     if (strcmp(mime_types[i].ext, pos+1) == 0) {
-      return mime_types[i].ext;
+      return mime_types[i].mime_type;
     }
   }
 
