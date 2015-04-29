@@ -1,4 +1,4 @@
-# Guava [![Build Status](https://travis-ci.org/flatpeach/guava.svg)](https://travis-ci.org/flatpeach/guava)
+# Guava [![Build Status](https://travis-ci.org/StarfruitStack/guava.svg?branch=master)](https://travis-ci.org/StartfruitStack/guava)
 
 Guava is a super lightweight and high performance web framework for Python written in C. It is totally different with other traditional Python web frameworks.
 
