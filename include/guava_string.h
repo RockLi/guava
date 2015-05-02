@@ -34,7 +34,6 @@ guava_bool_t guava_string_equal_raw(const guava_string_t s, const char *s2);
 
 size_t guava_string_common_string_count_from_start(const guava_string_t s, const guava_string_t s2);
 
-
-void guava_string_free(const guava_string_t gs);
+void guava_string_free(void *gs);
 
 #endif /* !__GUAVA_STRING_H__ */

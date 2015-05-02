@@ -113,7 +113,7 @@ guava_hashtable_delete(guava_hashtable_t *h,
       h->buckets[hash % h->bucket_count] = entry->next;
       value = entry->value;
       if (h->key_free_fn) {
-        h->key_free_fn(entry->key);
+        h->key_free_fn((void *)(entry->key));
       }
       guava_free(entry);
       return value;
@@ -183,7 +183,7 @@ guava_hashtable_destroy(guava_hashtable_t *h)
     while (entry) {
       h->buckets[i] = entry->next;
       if (h->key_free_fn) {
-        h->key_free_fn(entry->key);
+        h->key_free_fn((void *)(entry->key));
       }
       if (h->value_free_fn) {
 	h->value_free_fn(entry->value);

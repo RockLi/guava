@@ -19,7 +19,7 @@ typedef struct guava_hashtable_entry {
 
 typedef uint32_t (*guava_hashtable_key_hash_func)(const char *key);
 typedef guava_bool_t (*guava_hashtable_key_cmp_func)(const char *key1, const char *key2);
-typedef void (*guava_hashtable_key_free_func)(const char *);
+typedef void (*guava_hashtable_key_free_func)(void *);
 typedef void (*guava_hashtable_value_free_func)(void *);
 typedef void (*guava_hashtable_value_print_func)(void *);
 
@@ -44,44 +44,50 @@ typedef struct guava_hashtable_iter {
 /**
  * Create a new Hashtable
  */
-guava_hashtable_t *guava_hashtable_new(uint32_t                         hint_size,
-                                       guava_hashtable_key_hash_func    key_hash_fn,
-                                       guava_hashtable_key_cmp_func     key_cmp_fn,
-                                       guava_hashtable_key_free_func    key_free_fn,
-                                       guava_hashtable_value_free_func  value_free_fn,
-                                       guava_hashtable_value_print_func value_print_fn);
+guava_hashtable_t *
+guava_hashtable_new(uint32_t                         hint_size,
+                    guava_hashtable_key_hash_func    key_hash_fn,
+                    guava_hashtable_key_cmp_func     key_cmp_fn,
+                    guava_hashtable_key_free_func    key_free_fn,
+                    guava_hashtable_value_free_func  value_free_fn,
+                    guava_hashtable_value_print_func value_print_fn);
 
 /**
  * Insert one entry into the hashtable
  */
-guava_bool_t guava_hashtable_insert(guava_hashtable_t *h,
-                                    const char        *key,
-                                    void              *value);
+guava_bool_t
+guava_hashtable_insert(guava_hashtable_t *h,
+                       const char        *key,
+                       void              *value);
 
 /**
  * Update one entry in the hashtable
  */
-guava_bool_t guava_hashtable_update(guava_hashtable_t *h,
-                                    const char        *key,
-                                    void              *data);
+guava_bool_t
+guava_hashtable_update(guava_hashtable_t *h,
+                       const char        *key,
+                       void              *data);
 
 
 /**
  * Find/Lookup one entry in the hashtable
  */
-void *guava_hashtable_find(guava_hashtable_t *h,
-                           const char        *key);
+void *
+guava_hashtable_find(guava_hashtable_t *h,
+                     const char        *key);
 
 /**
  * Delete one entry from the hashtable
  */
-void *guava_hashtable_delete(guava_hashtable_t *h,
-                             const char        *key);
+void *
+guava_hashtable_delete(guava_hashtable_t *h,
+                       const char        *key);
 
 /**
  * Delete all entries from the hashtable
  */
-void guava_hashtable_clear(guava_hashtable_t *h);
+void
+guava_hashtable_clear(guava_hashtable_t *h);
 
 /**
  * Expand the hashtable
@@ -138,5 +144,12 @@ guava_hashtable_iter_next(guava_hashtable_iter_t *it);
  */
 guava_bool_t
 guava_hashtable_iter_destroy(guava_hashtable_iter_t *it);
+
+uint32_t
+guava_hashtable_key_hash_func_default(const char *key);
+
+guava_bool_t
+guava_hashtable_key_cmp_func_default(const char *key1,
+                                     const char *key2);
 
 #endif /* !__GUAVA_HASHTABLE_H__ */

@@ -36,7 +36,7 @@ guava_string_t guava_string_new_size(const char *init, size_t len) {
   return (char *)h->data;
 }
 
-void guava_string_free(const guava_string_t gs) {
+void guava_string_free(void *gs) {
   guava_string_header_t *h = (guava_string_header_t *)((char *)gs - sizeof(guava_string_header_t));
   guava_free(h);
 }
