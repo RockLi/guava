@@ -12,10 +12,9 @@
 uint32_t
 guava_hashtable_key_hash_func_default(const char *key)
 {
-  char *ptr = (char *)key;
-  uint32_t hash = 0;
-  uint32_t x	= 0;
-  uint32_t i    = 0;
+  char     *ptr  = (char *)key;
+  uint32_t  hash = 0;
+  uint32_t  x	 = 0;
   while (*ptr) {
     hash = (hash << 4) + (*ptr++);
     if ((x = hash & 0xF0000000L) != 0)

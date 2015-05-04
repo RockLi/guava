@@ -10,6 +10,58 @@
 #include "guava_memory.h"
 #include "guava_util.h"
 
+static char hex_codes[] = "0123456789ABCDEF";
+
+char n_from_hex(uint8_t c) {
+  return isdigit(c) ? c - 0x30 : toupper(c) - 0x41 + 0x0A;
+}
+
+char n_to_hex(uint8_t c) {
+
+  assert(c >= 0 && c <= 0x0F);
+  return hex_codes[c & 0x0F];
+}
+
+guava_string_t guava_url_encode(const char *str) {
+  char *pstr = (char *)str, *buf = guava_malloc(strlen(str) * 3 + 1), *pbuf = buf;
+  while (*pstr) {
+    if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') {
+      *pbuf++ = *pstr;
+    } else if (*pstr == ' ') {
+      *pbuf++ = '+';
+    } else {
+      *pbuf++ = '%', *pbuf++ = n_to_hex(*pstr >> 4), *pbuf++ = n_to_hex(*pstr & 15);
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  guava_string_t ret = guava_string_new(buf);
+  guava_free(buf);
+  return ret;
+}
+
+guava_string_t guava_url_decode(const char *str) {
+  char *pstr = (char *)str, *buf = guava_malloc(strlen(str) + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '%') {
+      if (pstr[1] && pstr[2]) {
+        *pbuf++ = n_from_hex(pstr[1]) << 4 | n_from_hex(pstr[2]);
+        pstr += 2;
+      }
+    } else if (*pstr == '+') {
+      *pbuf++ = ' ';
+    } else {
+      *pbuf++ = *pstr;
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  guava_string_t ret = guava_string_new(buf);
+  guava_free(buf);
+  return ret;
+}
+
+
 guava_url_t *
 guava_url_new(const char        *schema,
               const char        *username,
@@ -278,18 +330,11 @@ guava_url_parse(const char *raw)
 }
 
 guava_string_t
-guava_url_encoded(guava_url_t *url)
+guava_url_format(guava_url_t *url, guava_bool_t encode)
 {
   if (!url) {
     return NULL;
   }
-  /* @Todo */
-  return NULL;
-}
-
-guava_string_t
-guava_url_unencoded(guava_url_t *url)
-{
   guava_string_t ret = NULL;
   ret = guava_string_append(ret, url->schema);
   ret = guava_string_append_raw(ret, "://");
@@ -324,9 +369,21 @@ guava_url_unencoded(guava_url_t *url)
       if (i++ > 0) {
         ret = guava_string_append_raw(ret, "&");
       }
-      ret = guava_string_append_raw(ret, key);
+      if (encode) {
+        guava_string_t encoded = guava_url_encode(key);
+        ret = guava_string_append(ret, encoded);
+        guava_string_free(encoded);
+      } else {
+        ret = guava_string_append_raw(ret, key);
+      }
       ret = guava_string_append_raw(ret, "=");
-      ret = guava_string_append(ret, value);
+      if (encode) {
+        guava_string_t encoded = guava_url_encode(value);
+        ret = guava_string_append(ret, encoded);
+        guava_string_free(encoded);
+      } else {
+        ret = guava_string_append(ret, value);
+      }
 
       if (guava_hashtable_iter_next(it) == GUAVA_FALSE)
         break;
@@ -343,6 +400,18 @@ guava_url_unencoded(guava_url_t *url)
   return ret;
 }
 
+guava_string_t
+guava_url_encoded(guava_url_t *url)
+{
+  return guava_url_format(url, GUAVA_TRUE);
+}
+
+guava_string_t
+guava_url_unencoded(guava_url_t *url)
+{
+  return guava_url_format(url, GUAVA_FALSE);
+}
+
 
 #if 1
 
@@ -350,10 +419,12 @@ int
 main(int argc, char **argv){
   guava_url_t *url = guava_url_new("http", NULL, NULL, "localhost", 5000, "/", NULL, "id1");
   guava_url_set_query(url, "name", "rock");
-  guava_url_set_query(url, "age", "27");
+  guava_url_set_query(url, "D%A", "27");
 
   guava_string_t s = guava_url_unencoded(url);
+  printf("%s\n", s);
 
+  s = guava_url_encoded(url);
   printf("%s\n", s);
 
   return 0;

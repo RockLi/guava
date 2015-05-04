@@ -11,29 +11,50 @@
 
 #define GUAVA_STRING_CONST 0x01
 
-static inline size_t guava_string_len(const guava_string_t gs) {
+static inline size_t
+guava_string_len(const guava_string_t gs)
+{
   guava_string_header_t *h = (guava_string_header_t *)((char *)gs - sizeof(guava_string_header_t));
   return h->len;
 }
 
-guava_string_t guava_string_new(const char *init);
+guava_string_t
+guava_string_new(const char *init);
 
-guava_string_t guava_string_new_size(const char *init, size_t len);
+guava_string_t
+guava_string_new_size(const char *init,
+                      size_t      len);
 
-guava_string_t guava_string_append(const guava_string_t gs, const guava_string_t gs2);
+guava_string_t
+guava_string_append(const guava_string_t gs,
+                    const guava_string_t gs2);
 
-guava_string_t guava_string_append_raw(const guava_string_t gs, const char *s);
+guava_string_t
+guava_string_append_raw(const guava_string_t  gs,
+                        const char           *s);
 
-guava_string_t guava_string_append_raw_size(const guava_string_t gs, const char *s, size_t len);
+guava_string_t
+guava_string_append_raw_size(const guava_string_t  gs,
+                             const char           *s,
+                             size_t                len);
 
-guava_string_t guava_string_append_int(const guava_string_t gs, int i);
+guava_string_t
+guava_string_append_int(const guava_string_t gs,
+                        int                  i);
 
-guava_bool_t guava_string_starts_with(const guava_string_t s1, const guava_string_t s2);
+guava_bool_t
+guava_string_starts_with(const guava_string_t s1,
+                         const guava_string_t s2);
 
-guava_bool_t guava_string_equal_raw(const guava_string_t s, const char *s2);
+guava_bool_t
+guava_string_equal_raw(const guava_string_t  s,
+                       const char           *s2);
 
-size_t guava_string_common_string_count_from_start(const guava_string_t s, const guava_string_t s2);
+size_t
+guava_string_common_string_count_from_start(const guava_string_t s,
+                                            const guava_string_t s2);
 
-void guava_string_free(void *gs);
+void
+guava_string_free(void *gs);
 
 #endif /* !__GUAVA_STRING_H__ */

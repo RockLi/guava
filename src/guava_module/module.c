@@ -21,6 +21,8 @@ extern PyObject *init_session(void);
 
 extern PyObject *init_cookie(void);
 
+extern PyObject *init_url_module(void);
+
 guava_bool_t register_module(PyObject *package, const char *name, PyObject *module) {
   if (!module) {
     return GUAVA_FALSE;
@@ -37,14 +39,15 @@ guava_bool_t register_module(PyObject *package, const char *name, PyObject *modu
 }
 
 PyObject *init_guava(void) {
-  PyObject *guava_module = NULL;
-  PyObject *request_module = NULL;
-  PyObject *server_module = NULL;
-  PyObject *handler_module = NULL;
+  PyObject *guava_module      = NULL;
+  PyObject *request_module    = NULL;
+  PyObject *server_module     = NULL;
+  PyObject *handler_module    = NULL;
   PyObject *controller_module = NULL;
-  PyObject *router_module = NULL;
-  PyObject *session_module = NULL;
-  PyObject *cookie_module = NULL;
+  PyObject *router_module     = NULL;
+  PyObject *session_module    = NULL;
+  PyObject *cookie_module     = NULL;
+  PyObject *url_module        = NULL;
 
   PyEval_InitThreads();
 
@@ -82,6 +85,11 @@ PyObject *init_guava(void) {
 
   cookie_module = init_cookie();
   if (!register_module(guava_module, "cookie", cookie_module)) {
+    return NULL;
+  }
+
+  url_module = init_url_module();
+  if (!register_module(guava_module, "url", url_module)) {
     return NULL;
   }
 
