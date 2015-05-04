@@ -49,7 +49,7 @@ Py_URL_init(Py_URL   *self,
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "|ssssisos",
+                                   "|ssssisOs",
                                    kwlist,
                                    &schema,
                                    &username,
@@ -75,8 +75,9 @@ Py_URL_init(Py_URL   *self,
     PyObject *key = NULL, *value = NULL;
     Py_ssize_t pos = 0;
     while (PyDict_Next(queries, &pos, &key, &value)) {
-      if (!PyString_Check(key) || !PyString_Check(value)) {
-        guava_url_destroy(self->url);
+      if (!PyString_Check(key) ||
+          !PyString_Check(value)) {
+        PyErr_SetString(PyExc_TypeError, "the value of query must be string");
         return -1;
       }
       guava_url_set_query(self->url,
@@ -117,7 +118,8 @@ Py_URL_set_schema(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the schema property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the schema attribute must be string or None");
     return -1;
   }
@@ -148,7 +150,8 @@ Py_URL_set_username(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the username property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the username attribute must be string or None");
     return -1;
   }
@@ -179,7 +182,8 @@ Py_URL_set_password(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the password property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the password attribute must be string or None");
     return -1;
   }
@@ -210,7 +214,8 @@ Py_URL_set_host(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the host property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the host attribute must be string or None");
     return -1;
   }
@@ -269,7 +274,8 @@ Py_URL_set_path(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the path property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the path attribute must be string or None");
     return -1;
   }
@@ -312,7 +318,8 @@ Py_URL_set_queries(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the queries property");
 
-  if (!PyDict_Check(value) && Py_None != value) {
+  if (!PyDict_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the queries attribute must be dict or None");
     return -1;
   }
@@ -360,7 +367,8 @@ Py_URL_set_fragment(Py_URL   *self,
 {
   MODULE_SETTER_CHECK_PROPERTY_DELETE("can not delete the fragment property");
 
-  if (!PyString_Check(value) && Py_None != value) {
+  if (!PyString_Check(value) &&
+      Py_None != value) {
     PyErr_SetString(PyExc_TypeError, "the fragment attribute must be string or None");
     return -1;
   }
