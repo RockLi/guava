@@ -11,6 +11,7 @@
 #include "guava_router/guava_router.h"
 #include "guava_handler.h"
 #include "guava_request.h"
+#include "guava_url.h"
 
 typedef struct {
   PyObject_HEAD
@@ -22,6 +23,12 @@ typedef struct {
   int backlog;
   char auto_reload;
 } Server;
+
+typedef struct {
+  PyObject_HEAD
+
+  guava_url_t *url;
+} Py_URL;
 
 typedef struct {
   PyObject_HEAD
@@ -95,13 +102,15 @@ extern PyTypeObject ControllerType;
 
 extern PyTypeObject CookieType;
 
+extern PyTypeObject PyType_URL;
+
 extern PyObject *Handler_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 #define MODULE_SETTER_CHECK_PROPERTY_DELETE(msg)        \
   do {                                                  \
     if (value == NULL) {                                \
-      PyErr_SetString(PyExc_TypeError, (msg))           \
-        return -1;                                      \
+      PyErr_SetString(PyExc_TypeError, (msg));          \
+      return -1;                                        \
     }                                                   \
   } while(0)
 
