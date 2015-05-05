@@ -95,9 +95,9 @@ Py_URL_repr(Py_URL *self)
   guava_string_t encoded_url = guava_url_encoded(self->url);
   if (encoded_url) {
     return PyString_FromFormat("%s", encoded_url);
-  } else {
-    Py_RETURN_NONE;
   }
+
+  Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -106,9 +106,9 @@ Py_URL_get_schema(Py_URL *self,
 {
   if (self->url->schema) {
     return PyString_FromString(self->url->schema);
-  } else {
-    Py_RETURN_NONE;
   }
+
+  Py_RETURN_NONE;
 }
 
 static int
@@ -138,9 +138,9 @@ Py_URL_get_username(Py_URL *self,
 {
   if (self->url->username) {
     return PyString_FromString(self->url->username);
-  } else {
-    Py_RETURN_NONE;
   }
+
+  Py_RETURN_NONE;
 }
 
 static int
@@ -170,9 +170,9 @@ Py_URL_get_password(Py_URL *self,
 {
   if (self->url->password) {
     return PyString_FromString(self->url->password);
-  } else {
-    Py_RETURN_NONE;
   }
+
+  Py_RETURN_NONE;
 }
 
 static int
@@ -511,9 +511,7 @@ init_url_module(void)
   }
 
   m = Py_InitModule3("guava.url", Py_URL_module_methods, "guava.url .");
-  if (!m) {
-    return NULL;
-  }
+  if (!m) return NULL;
 
   Py_INCREF(&PyType_URL);
 

@@ -23,6 +23,8 @@ extern PyObject *init_cookie(void);
 
 extern PyObject *init_url_module(void);
 
+extern PyObject *init_cookie_module(void);
+
 guava_bool_t register_module(PyObject *package, const char *name, PyObject *module) {
   if (!module) {
     return GUAVA_FALSE;
@@ -40,12 +42,12 @@ guava_bool_t register_module(PyObject *package, const char *name, PyObject *modu
 
 PyObject *init_guava(void) {
   PyObject *guava_module      = NULL;
-  PyObject *request_module    = NULL;
-  PyObject *server_module     = NULL;
-  PyObject *handler_module    = NULL;
-  PyObject *controller_module = NULL;
-  PyObject *router_module     = NULL;
-  PyObject *session_module    = NULL;
+  /* PyObject *request_module    = NULL; */
+  /* PyObject *server_module     = NULL; */
+  /* PyObject *handler_module    = NULL; */
+  /* PyObject *controller_module = NULL; */
+  /* PyObject *router_module     = NULL; */
+  /* PyObject *session_module    = NULL; */
   PyObject *cookie_module     = NULL;
   PyObject *url_module        = NULL;
 
@@ -53,37 +55,37 @@ PyObject *init_guava(void) {
 
   guava_module = Py_InitModule("guava", NULL);
 
-  request_module = init_request();
-  if (!register_module(guava_module, "request", request_module)) {
-    return NULL;
-  }
+  /* request_module = init_request(); */
+  /* if (!register_module(guava_module, "request", request_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  server_module = init_server();
-  if (!register_module(guava_module, "server", server_module)) {
-    return NULL;
-  }
+  /* server_module = init_server(); */
+  /* if (!register_module(guava_module, "server", server_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  handler_module = init_handler();
-  if (!register_module(guava_module, "handler", handler_module)) {
-    return NULL;
-  }
+  /* handler_module = init_handler(); */
+  /* if (!register_module(guava_module, "handler", handler_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  router_module = init_router();
-  if (!register_module(guava_module, "router", router_module)) {
-    return NULL;
-  }
+  /* router_module = init_router(); */
+  /* if (!register_module(guava_module, "router", router_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  controller_module = init_controller();
-  if (!register_module(guava_module, "controller", controller_module)) {
-    return NULL;
-  }
+  /* controller_module = init_controller(); */
+  /* if (!register_module(guava_module, "controller", controller_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  session_module = init_session();
-  if (!register_module(guava_module, "session", session_module)) {
-    return NULL;
-  }
+  /* session_module = init_session(); */
+  /* if (!register_module(guava_module, "session", session_module)) { */
+  /*   return NULL; */
+  /* } */
 
-  cookie_module = init_cookie();
+  cookie_module = init_cookie_module();
   if (!register_module(guava_module, "cookie", cookie_module)) {
     return NULL;
   }
@@ -93,7 +95,7 @@ PyObject *init_guava(void) {
     return NULL;
   }
 
-  PyModule_AddStringConstant(guava_module, "version", GUAVA_VERSION);
+  /* PyModule_AddStringConstant(guava_module, "version", GUAVA_VERSION); */
 
   return guava_module;
 }

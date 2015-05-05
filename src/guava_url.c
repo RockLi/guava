@@ -78,30 +78,14 @@ guava_url_new(const char        *schema,
   }
 
   do {
-    if(!guava_url_set_schema(url, schema)) {
-      break;
-    }
-    if (!guava_url_set_username(url, username)) {
-      break;
-    }
-    if (!guava_url_set_password(url, password)) {
-      break;
-    }
-    if (!guava_url_set_host(url, host)) {
-      break;
-    }
-    if (!guava_url_set_port(url, port)) {
-      break;
-    }
-    if (!guava_url_set_path(url, path)) {
-      break;
-    }
-    if (!guava_url_set_queries(url, queries)) {
-      break;
-    }
-    if (!guava_url_set_fragment(url, fragment)) {
-      break;
-    }
+    if(!guava_url_set_schema(url, schema)) break;
+    if (!guava_url_set_username(url, username)) break;
+    if (!guava_url_set_password(url, password)) break;
+    if (!guava_url_set_host(url, host)) break;
+    if (!guava_url_set_port(url, port)) break;
+    if (!guava_url_set_path(url, path)) break;
+    if (!guava_url_set_queries(url, queries)) break;
+    if (!guava_url_set_fragment(url, fragment)) break;
 
     return url;
   } while(0);

@@ -12,6 +12,7 @@
 #include "guava_handler.h"
 #include "guava_request.h"
 #include "guava_url.h"
+#include "guava_cookie.h"
 
 typedef struct {
   PyObject_HEAD
@@ -29,6 +30,12 @@ typedef struct {
 
   guava_url_t *url;
 } Py_URL;
+
+typedef struct {
+  PyObject_HEAD
+
+  guava_cookie_t *cookie;
+} Py_Cookie;
 
 typedef struct {
   PyObject_HEAD
@@ -82,11 +89,6 @@ typedef struct {
   guava_router_t   *router;
 } Controller;
 
-typedef struct {
-  PyObject_HEAD
-
-  guava_cookie_t data;
-} Cookie;
 
 extern PyTypeObject HandlerType;
 
@@ -100,7 +102,7 @@ extern PyTypeObject RequestType;
 
 extern PyTypeObject ControllerType;
 
-extern PyTypeObject CookieType;
+extern PyTypeObject PyType_Cookie;
 
 extern PyTypeObject PyType_URL;
 
