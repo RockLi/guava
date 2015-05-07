@@ -73,9 +73,7 @@ guava_url_new(const char        *schema,
               const char        *fragment)
 {
   guava_url_t *url = (guava_url_t *)guava_calloc(1, sizeof(guava_url_t));
-  if (!url) {
-    return NULL;
-  }
+  if (!url) return NULL;
 
   do {
     if(!guava_url_set_schema(url, schema)) break;
@@ -97,9 +95,7 @@ guava_url_new(const char        *schema,
 void
 guava_url_destroy(guava_url_t *url)
 {
-  if (!url) {
-    return;
-  }
+  if (!url) return;
 
   if (url->schema) {
     guava_string_free(url->schema);

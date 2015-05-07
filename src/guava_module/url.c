@@ -505,10 +505,7 @@ PyObject *
 init_url_module(void)
 {
   PyObject* m = NULL;
-
-  if (PyType_Ready(&PyType_URL) < 0) {
-    return NULL;
-  }
+  if (PyType_Ready(&PyType_URL) < 0) return NULL;
 
   m = Py_InitModule3("guava.url", Py_URL_module_methods, "guava.url .");
   if (!m) return NULL;

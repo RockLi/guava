@@ -232,7 +232,7 @@ Py_Cookie_set_expired(Py_Cookie *self,
     return -1;
   }
 
-  if (!guava_cookie_set_expired(self->cookie, PyInt_AsLong(value))) {
+  if (!guava_cookie_set_expired(self->cookie, (int)PyInt_AsLong(value))) {
     PyErr_SetString(PyExc_TypeError, "failed to set the expired attribute");
     return -1;
   }
@@ -259,7 +259,7 @@ Py_Cookie_set_max_age(Py_Cookie *self,
     return -1;
   }
 
-  if (!guava_cookie_set_max_age(self->cookie, PyInt_AsLong(value))) {
+  if (!guava_cookie_set_max_age(self->cookie, (int)PyInt_AsLong(value))) {
     PyErr_SetString(PyExc_TypeError, "failed to set the max_age attribute");
     return -1;
   }
@@ -387,10 +387,7 @@ PyObject *
 init_cookie_module(void)
 {
   PyObject* m = NULL;
-
-  if (PyType_Ready(&PyType_Cookie) < 0) {
-    return NULL;
-  }
+  if (PyType_Ready(&PyType_Cookie) < 0) return NULL;
 
   m = Py_InitModule3("guava.cookie", Py_cookie_module_methods, "guava.cookie .");
   if (!m) return NULL;

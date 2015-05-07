@@ -46,12 +46,6 @@ typedef struct {
 typedef struct {
   PyObject_HEAD
 
-  guava_session_store_t *store;
-} SessionStore;
-
-typedef struct {
-  PyObject_HEAD
-
   guava_handler_t *handler;
 } Handler;
 
