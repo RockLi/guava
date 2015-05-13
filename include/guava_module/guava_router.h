@@ -7,7 +7,7 @@
 #ifndef __GUAVA_MODULE_ROUTER_H__
 #define __GUAVA_MODULE_ROUTER_H__
 
-#include "guava_module.h"
+#include "guava_module/guava_module.h"
 
 typedef struct {
   Router router;

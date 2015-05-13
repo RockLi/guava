@@ -4,7 +4,7 @@
  * license that can be found in the LICENSE file.
  */
 
-#include "guava_session_handler.h"
+#include "guava_session/guava_session_handler.h"
 #include "guava_string.h"
 #include "guava_hashtable.h"
 #include "guava_memory.h"

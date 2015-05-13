@@ -7,9 +7,14 @@
 #ifndef __GUAVA_STRING_H__
 #define __GUAVA_STRING_H__
 
-#include "guava.h"
+#include "guava_config.h"
 
 #define GUAVA_STRING_CONST 0x01
+
+struct guava_string_header{
+  size_t len;
+  char   data[0];
+};
 
 static inline size_t
 guava_string_len(const guava_string_t gs)

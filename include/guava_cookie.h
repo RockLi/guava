@@ -7,6 +7,7 @@
 #ifndef __GUAVA_COOKIE_H__
 #define __GUAVA_COOKIE_H__
 
+#include "guava_config.h"
 #include "guava_string.h"
 
 typedef struct guava_cookie {

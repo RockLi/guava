@@ -5,11 +5,11 @@
  */
 
 #include "guava.h"
-#include "guava_module.h"
+#include "guava_module/guava_module.h"
 #include "guava_memory.h"
 #include "guava_url.h"
-#include "guava_module_session_store.h"
-#include "guava_session_handler.h"
+#include "guava_module/guava_module_session_store.h"
+#include "guava_session/guava_session_handler.h"
 
 static PyObject *
 Py_SessionStore_new(PyTypeObject *type,
@@ -50,7 +50,7 @@ Py_SessionStore_init(Py_SessionStore *self,
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "s|iissBB",
+                                   "|siissBB",
                                    kwlist,
                                    &name,
                                    &gc_time,
@@ -62,7 +62,7 @@ Py_SessionStore_init(Py_SessionStore *self,
     return -1;
   }
 
-  self->store = guava_session_store_new(name,
+  self->store = guava_session_store_new(name ? name : "sid",
                                         (int)gc_time,
                                         (int)cookie_expired,
                                         cookie_path,
@@ -387,6 +387,11 @@ init_session_module(void)
   if (PyType_Ready(&PyType_MemSessionStore) < 0) return NULL;
   Py_INCREF(&PyType_MemSessionStore);
   PyModule_AddObject(m, "MemSessionStore", (PyObject *)&PyType_MemSessionStore);
+
+  PyType_FileSessionStore.tp_base = &PyType_SessionStore;
+  if (PyType_Ready(&PyType_FileSessionStore) < 0) return NULL;
+  Py_INCREF(&PyType_FileSessionStore);
+  PyModule_AddObject(m, "FileSessionStore", (PyObject *)&PyType_FileSessionStore);
 
   return m;
 }

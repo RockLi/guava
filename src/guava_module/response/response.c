@@ -6,6 +6,7 @@
 
 #include "guava.h"
 #include "guava_request.h"
+#include "guava_response.h"
 #include "guava_module.h"
 #include "guava_string.h"
 #include "guava_memory.h"
@@ -57,11 +58,11 @@ static PyGetSetDef Response_getseter[] = {
 };
 
 static PyMethodDef Response_methods[] = {
-  {"set_header", (PyCFunction)Response_set_header, METH_VARARGS, "set the response header"},
-  {"set_cookie", (PyCFunction)Response_set_cookie, METH_VARARGS, "set the response cookie"},
-  {"set_status_code", (PyCFunction)Response_set_status_code, METH_VARARGS, "set the response status code"},
-  {"write", (PyCFunction)Response_write, METH_VARARGS, "write data to the client"},
-  {"redirect", (PyCFunction)Response_redirect, METH_VARARGS, "redirect to the other url"},
+  /* {"set_header", (PyCFunction)Response_set_header, METH_VARARGS, "set the response header"}, */
+  /* {"set_cookie", (PyCFunction)Response_set_cookie, METH_VARARGS, "set the response cookie"}, */
+  /* {"set_status_code", (PyCFunction)Response_set_status_code, METH_VARARGS, "set the response status code"}, */
+  /* {"write", (PyCFunction)Response_write, METH_VARARGS, "write data to the client"}, */
+  /* {"redirect", (PyCFunction)Response_redirect, METH_VARARGS, "redirect to the other url"}, */
   {NULL}
 };
 

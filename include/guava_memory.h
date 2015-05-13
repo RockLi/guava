@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -11,17 +11,22 @@
 
 #ifdef GUAVA_MEM_DEBUG
 
-void *guava_malloc(size_t size);
+void *
+guava_malloc(size_t size);
 
-void *guava_calloc(size_t count,
-                   size_t size);
+void *
+guava_calloc(size_t count,
+             size_t size);
 
-void guava_free(void *p);
+void
+guava_free(void *p);
 
-void *guava_realloc(void   *p,
-                    size_t  size);
+void *
+guava_realloc(void   *p,
+              size_t  size);
 
-size_t guava_malloc_size(void *p);
+size_t
+guava_malloc_size(void *p);
 
 #else
 

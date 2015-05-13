@@ -7,7 +7,7 @@
 #ifndef __GUAVA_HASHTABLE_H__
 #define __GUAVA_HASHTABLE_H__
 
-#include "guava.h"
+#include "guava_config.h"
 
 typedef struct guava_hashtable_entry {
   struct guava_hashtable_entry *next;

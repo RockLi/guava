@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -18,6 +18,7 @@ guava_server_t *guava_server_new() {
   }
 
   server->routers = NULL;
+  server->middlewares = NULL;
   server->debug = GUAVA_FALSE;
 
   return server;
@@ -25,6 +26,7 @@ guava_server_t *guava_server_new() {
 
 void guava_server_free(guava_server_t *server) {
   Py_XDECREF(server->routers);
+  Py_XDECREF(server->middlewares);
   guava_free(server);
 }
 
@@ -59,6 +61,7 @@ void guava_server_on_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *bu
       fprintf(stderr, "400\n");
     }
   }
+
   if (buf->base) {
     guava_free(buf->base);
   }
@@ -83,20 +86,17 @@ void signal_shutdown_cb(uv_signal_t *handle, int signum) {
 
 void guava_server_start(guava_server_t *server, const char *ip, uint16_t port, int backlog) {
   if (!server->routers) {
-    fprintf(stderr, "No routers set, will use the default router: StaticRouter\n");
-
-    StaticRouter *static_router = (StaticRouter *)PyObject_New(StaticRouter, &StaticRouterType);
-    static_router->router.router = (guava_router_t *)guava_router_static_new();
-    guava_router_set_mount_point((guava_router_t *)static_router->router.router, "/");
-    guava_router_static_set_directory((guava_router_static_t *)static_router->router.router, ".");
-    guava_router_static_set_allow_index((guava_router_static_t *)static_router->router.router, GUAVA_TRUE);
-    guava_server_add_router(server, (Router *)static_router);
+    /* StaticRouter *static_router = (StaticRouter *)PyObject_New(StaticRouter, &StaticRouterType); */
+    /* static_router->router.router = (guava_router_t *)guava_router_static_new(); */
+    /* guava_router_set_mount_point((guava_router_t *)static_router->router.router, "/"); */
+    /* guava_router_static_set_directory((guava_router_static_t *)static_router->router.router, "."); */
+    /* guava_router_static_set_allow_index((guava_router_static_t *)static_router->router.router, GUAVA_TRUE); */
+    /* guava_server_add_router(server, (Router *)static_router); */
   }
 
   fprintf(stdout, "Listening on %s:%d...\n", ip, port);
 
   uv_loop_init(&server->loop);
-
   uv_tcp_init(&server->loop, &server->server);
 
   struct sockaddr_in address;

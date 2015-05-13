@@ -104,7 +104,7 @@ guava_response_t *guava_response_new(void) {
   resp->serialized_data = NULL;
   resp->cookies = NULL;
 
-  guava_response_set_header(resp, "Server", SERVER_NAME);
+  guava_response_set_header(resp, "Server", GUAVA_SERVER_DEFAULT_NAME);
 
   return resp;
 }

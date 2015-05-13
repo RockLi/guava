@@ -94,6 +94,18 @@ To be honest, there're lots of places in guava could be optimized.
 
 The performance of the Guava builtin web server is good enough for serving as the standalone web server. But till now I haven't spend so much time on the security part, so maybe it's not the best time to choose this kind of deployment.
 
+## Modules
+
+1. guava.url
+2. guava.cookie
+3. guava.request
+4. guava.response
+5. guava.server
+6. guava.session
+7. guava.router
+8. guava.handler
+
+
 
 ## Router
 

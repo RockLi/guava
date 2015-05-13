@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -26,139 +26,13 @@ static guava_request_method_t guava_request_methods[] = {
   {2, "HEAD"},
   {3, "POST"},
   {4, "PUT"},
-  /* pathological */
-  {5, "CONNECT"},
-  {6, "OPTIONS"},
-  {7, "TRACE"},
-  /* webdav */                      \
-  {8, "COPY"},
-  {9, "LOCK"},
-  {10, "MKCOL"},
-  {11, "MOVE"},
-  {12, "PROPFIND"},
-  {13, "PROPPATCH"},
-  {14, "SEARCH"},
-  {15, "UNLOCK"},
-  /* subversion */
-  {16, "REPORT"},
-  {17, "MKACTIVITY"},
-  {18, "CHECKOUT"},
-  {19, "MERGE"},
-  /* upnp */
-  {20, "MSEARCH"},
-  {21, "NOTIFY"},
-  {22, "SUBSCRIBE"},
-  {23, "UNSUBSCRIBE"},
-  /* RFC-5789 */
-  {24, "PATCH"},
-  {25, "PURGE"}
+  /* Donot support all the others */
 };
 
-guava_request_t *guava_request_new(void) {
-  guava_request_t *req = (guava_request_t *)guava_calloc(1, sizeof(guava_request_t));
-  if (!req) {
-    return NULL;
-  }
-
-  req->url = NULL;
-  req->path = NULL;
-  req->host = NULL;
-  req->body = NULL;
-
-  req->HEADERS = PyDict_New();
-  if (!req->HEADERS) {
-    guava_free(req);
-    return NULL;
-  }
-
-  req->major = 1;
-  req->minor = 1;
-  req->method = HTTP_GET;
-
-  req->GET = PyDict_New();
-  if (!req->GET) {
-    Py_DECREF(req->HEADERS);
-    guava_free(req);
-    return NULL;
-  }
-
-  req->POST = PyDict_New();
-  if (!req->POST) {
-    Py_DECREF(req->HEADERS);
-    Py_DECREF(req->GET);
-    guava_free(req);
-    return NULL;
-  }
-
-  req->COOKIES = PyDict_New();
-  if (!req->COOKIES) {
-    Py_DECREF(req->HEADERS);
-    Py_DECREF(req->GET);
-    Py_DECREF(req->POST);
-    guava_free(req);
-    return NULL;
-  }
-
-  return req;
-}
-
-void guava_request_free(guava_request_t *req) {
-  if (req->url) {
-    guava_string_free(req->url);
-    req->url = NULL;
-  }
-
-  if (req->path) {
-    guava_string_free(req->path);
-    req->path = NULL;
-  }
-
-  if (req->host) {
-    guava_string_free(req->host);
-    req->host = NULL;
-  }
-
-  if (req->body) {
-    guava_string_free(req->body);
-    req->body = NULL;
-  }
-
-  if (req->HEADERS) {
-    Py_DECREF(req->HEADERS);
-    req->HEADERS = NULL;
-  }
-
-  if (req->GET) {
-    Py_DECREF(req->GET);
-    req->GET = NULL;
-  }
-
-  if (req->POST) {
-    Py_DECREF(req->POST);
-    req->POST = NULL;
-  }
-
-  if (req->COOKIES) {
-    Py_DECREF(req->COOKIES);
-    req->COOKIES = NULL;
-  }
-
-  guava_free(req);
-}
-
-int8_t guava_request_get_method(const char *s) {
-  for (size_t i = 0; i < sizeof(guava_request_methods) / sizeof(guava_request_methods[0]); ++i) {
-    if (strncmp(guava_request_methods[i].name, s, strlen(s)) == 0) {
-      return guava_request_methods[i].code;
-    }
-  }
-
-  return -1;
-}
-
-int guava_request_on_message_begin(http_parser *parser) {
+int
+guava_request_on_message_begin(http_parser *parser)
+{
   guava_conn_t *conn = (guava_conn_t *)parser->data;
-
   Request *request = (Request *)PyObject_New(Request, &RequestType);
 
   request->req = guava_request_new();
@@ -170,51 +44,6 @@ int guava_request_on_message_begin(http_parser *parser) {
   }
 
   return 0;
-}
-
-void guava_request_extract_from_url(guava_request_t *req) {
-  if (!req->url) {
-    return;
-  }
-
-  char *ptr = strchr(req->url, '?');
-
-  if (!ptr) {
-    req->path = guava_string_new(req->url);
-  } else {
-    req->path = guava_string_new_size(req->url, ptr - (char *)req->url);
-    ptr += 1;
-    if (ptr != NULL) {
-      char *and_ptr = strchr(ptr, '&');
-      char *equal_ptr = NULL;
-
-      while (ptr) {
-        if (!and_ptr) {
-          equal_ptr = strchr(ptr, '=');
-          if (equal_ptr) {
-            PyObject *key = PyString_FromStringAndSize(ptr, equal_ptr-ptr);
-            PyObject *value = PyString_FromString(equal_ptr+1);
-            PyDict_SetItem(req->GET, key, value);
-          }
-          break;
-        } else {
-          guava_string_t v = guava_string_new_size(ptr, and_ptr-ptr);
-          equal_ptr = strchr(ptr, '=');
-          if (equal_ptr) {
-            PyObject *key = PyString_FromStringAndSize(ptr, equal_ptr-ptr);
-            PyObject *value = PyString_FromStringAndSize(equal_ptr+1, and_ptr-equal_ptr-1);
-            PyDict_SetItem(req->GET, key, value);
-          }
-          guava_string_free(v);
-          ptr = and_ptr + 1;
-          if (!ptr) {
-            break;
-          }
-          and_ptr = strchr(ptr, '&');
-        }
-      }
-    }
-  }
 }
 
 int guava_request_on_url(http_parser *parser, const char *buf, size_t len) {
@@ -323,6 +152,108 @@ int guava_request_on_body(http_parser *parser, const char *buf, size_t len) {
   }
 
   return 0;
+}
+
+guava_request_t *guava_request_new(void) {
+  guava_request_t *req = (guava_request_t *)guava_calloc(1, sizeof(guava_request_t));
+  if (!req) {
+    return NULL;
+  }
+
+  req->url = NULL;
+  req->path = NULL;
+  req->host = NULL;
+  req->body = NULL;
+
+  req->HEADERS = PyDict_New();
+  if (!req->HEADERS) {
+    guava_free(req);
+    return NULL;
+  }
+
+  req->major = 1;
+  req->minor = 1;
+  req->method = HTTP_GET;
+
+  req->GET = PyDict_New();
+  if (!req->GET) {
+    Py_DECREF(req->HEADERS);
+    guava_free(req);
+    return NULL;
+  }
+
+  req->POST = PyDict_New();
+  if (!req->POST) {
+    Py_DECREF(req->HEADERS);
+    Py_DECREF(req->GET);
+    guava_free(req);
+    return NULL;
+  }
+
+  req->COOKIES = PyDict_New();
+  if (!req->COOKIES) {
+    Py_DECREF(req->HEADERS);
+    Py_DECREF(req->GET);
+    Py_DECREF(req->POST);
+    guava_free(req);
+    return NULL;
+  }
+
+  return req;
+}
+
+void guava_request_free(guava_request_t *req) {
+  if (req->url) {
+    guava_string_free(req->url);
+    req->url = NULL;
+  }
+
+  if (req->path) {
+    guava_string_free(req->path);
+    req->path = NULL;
+  }
+
+  if (req->host) {
+    guava_string_free(req->host);
+    req->host = NULL;
+  }
+
+  if (req->body) {
+    guava_string_free(req->body);
+    req->body = NULL;
+  }
+
+  if (req->HEADERS) {
+    Py_DECREF(req->HEADERS);
+    req->HEADERS = NULL;
+  }
+
+  if (req->GET) {
+    Py_DECREF(req->GET);
+    req->GET = NULL;
+  }
+
+  if (req->POST) {
+    Py_DECREF(req->POST);
+    req->POST = NULL;
+  }
+
+  if (req->COOKIES) {
+    Py_DECREF(req->COOKIES);
+    req->COOKIES = NULL;
+  }
+
+  guava_free(req);
+}
+
+int8_t guava_request_get_method(const char *s) {
+  for (size_t i = 0; i < sizeof(guava_request_methods) / sizeof(guava_request_methods[0]); ++i) {
+    if (strncmp(guava_request_methods[i].name, s, strlen(s)) == 0) {
+      return guava_request_methods[i].code;
+    }
+  }
+
+  return -1;
 }
 
 void on_write(uv_write_t *req, int status) {
@@ -449,7 +380,7 @@ int guava_request_on_message_complete(http_parser *parser) {
     }
 
     Py_DECREF(cls);
-    c->resp = resp;
+    c->res = resp;
     c->req = ((Request *)conn->request)->req;
     c->router = handler->handler->router;
 
@@ -567,9 +498,7 @@ char *guava_request_parse_form_data(char **data, guava_string_t *name, guava_str
     *data = p;
   } while(0);
 
-  if (!name_start || !name_end || !value_start || !value_end) {
-    return NULL;
-  }
+  if (!name_start || !name_end || !value_start || !value_end) return NULL;
 
   *name = guava_string_new_size(name_start, name_end - name_start);
   guava_string_t v = guava_string_new_size(value_start, value_end - value_start);
@@ -577,4 +506,49 @@ char *guava_request_parse_form_data(char **data, guava_string_t *name, guava_str
   guava_string_free(v);
 
   return *data;
+}
+
+void guava_request_extract_from_url(guava_request_t *req) {
+  if (!req->url) {
+    return;
+  }
+
+  char *ptr = strchr(req->url, '?');
+
+  if (!ptr) {
+    req->path = guava_string_new(req->url);
+  } else {
+    req->path = guava_string_new_size(req->url, ptr - (char *)req->url);
+    ptr += 1;
+    if (ptr != NULL) {
+      char *and_ptr = strchr(ptr, '&');
+      char *equal_ptr = NULL;
+
+      while (ptr) {
+        if (!and_ptr) {
+          equal_ptr = strchr(ptr, '=');
+          if (equal_ptr) {
+            PyObject *key = PyString_FromStringAndSize(ptr, equal_ptr-ptr);
+            PyObject *value = PyString_FromString(equal_ptr+1);
+            PyDict_SetItem(req->GET, key, value);
+          }
+          break;
+        } else {
+          guava_string_t v = guava_string_new_size(ptr, and_ptr-ptr);
+          equal_ptr = strchr(ptr, '=');
+          if (equal_ptr) {
+            PyObject *key = PyString_FromStringAndSize(ptr, equal_ptr-ptr);
+            PyObject *value = PyString_FromStringAndSize(equal_ptr+1, and_ptr-equal_ptr-1);
+            PyDict_SetItem(req->GET, key, value);
+          }
+          guava_string_free(v);
+          ptr = and_ptr + 1;
+          if (!ptr) {
+            break;
+          }
+          and_ptr = strchr(ptr, '&');
+        }
+      }
+    }
+  }
 }

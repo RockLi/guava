@@ -7,7 +7,7 @@
 #ifndef __GUAVA_SESSION_STORE_H__
 #define __GUAVA_SESSION_STORE_H__
 
-#include "guava_session_handler.h"
+#include "guava_session/guava_session_handler.h"
 
 typedef struct guava_session_store{
   guava_string_t                            name;                       /* session name used to talk with the user agent */
@@ -22,7 +22,6 @@ typedef struct guava_session_store{
   guava_session_handler_write               write_handler;              /* write the serialized data */
   guava_session_handler_destroy             destroy_handler;            /* release the resource */
 } guava_session_store_t;
-
 
 /**
  * Create and initialize a new session storage

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -13,27 +13,25 @@ typedef struct {
 
 static guava_mime_type_t mime_types[] = {
   {"html", "text/html"},
-  {"js", "text/javascript"},
-  {"css", "text/css"},
-  {"txt", "text/plain"},
-  {"png", "image/png"},
-  {"gif", "image/gif"},
-  {"jpg", "image/jpeg"},
+  {"js",   "text/javascript"},
+  {"css",  "text/css"},
+  {"txt",  "text/plain"},
+  {"png",  "image/png"},
+  {"gif",  "image/gif"},
+  {"jpg",  "image/jpeg"},
   {"jpeg", "image/jpeg"},
-  {"ico", "image/x-icon"},
+  {"ico",  "image/x-icon"},
 };
 
 const char *guava_mime_type_guess(const char *filename) {
   char *pos = strrchr(filename, '.');
-  if (!pos) {
-    return "text/plain";
-  }
+  if (!pos) return GUAVA_DEFAULT_MIME_TYPE;
 
-  for (int i = 0; i < sizeof(mime_types) / sizeof(mime_types[0]); ++i) {
+  for (size_t i = 0; i < sizeof(mime_types) / sizeof(mime_types[0]); ++i) {
     if (strcmp(mime_types[i].ext, pos+1) == 0) {
       return mime_types[i].mime_type;
     }
   }
 
-  return "text/plain";
+  return GUAVA_DEFAULT_MIME_TYPE;
 }

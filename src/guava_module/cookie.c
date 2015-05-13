@@ -4,10 +4,10 @@
  * license that can be found in the LICENSE file.
  */
 
-#include "guava.h"
 #include "guava_cookie.h"
+#include "guava.h"
 #include "guava_string.h"
-#include "guava_module.h"
+#include "guava_module/guava_module.h"
 #include "guava_memory.h"
 
 static PyObject *

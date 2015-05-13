@@ -7,7 +7,18 @@
 #ifndef __GUAVA_RESPONSE_H__
 #define __GUAVA_RESPONSE_H__
 
-#include "guava.h"
+#include "guava_config.h"
+
+struct guava_response {
+  uint16_t        major;
+  uint16_t        minor;
+  uint16_t        status_code;
+  PyObject       *headers;
+  PyObject       *cookies;
+  guava_conn_t   *conn;
+  guava_string_t  data;
+  guava_string_t  serialized_data;
+};
 
 typedef struct {
   int         code;

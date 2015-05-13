@@ -30,8 +30,9 @@ guava_sources =[ SRC_FOLDER + name for name in [
     'guava_memory.c',
     'guava_url.c',
     'guava_util.c',
-    'guava_session_handler.c',
-    'guava_session_store.c',
+    'guava_session/guava_session_handler.c',
+    'guava_session/guava_session_store.c',
+    'guava_vector.c',
 ]]
 
 guava_module_sources = [ SRC_FOLDER + 'guava_module/' + name for name in [
@@ -48,8 +49,9 @@ guava_module_sources = [ SRC_FOLDER + 'guava_module/' + name for name in [
     # 'router/router.c',
     # 'router/static.c',
     # 'server.c',
-    'session.c',
-    'session_mem.c',
+    'session/session.c',
+    'session/mem.c',
+    'session/file.c',
     'url.c',
 ]]
 

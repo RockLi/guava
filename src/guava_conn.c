@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -22,13 +22,16 @@ guava_conn_t *guava_conn_new() {
   conn->parser_settings.on_headers_complete = guava_request_on_headers_complete;
   conn->parser_settings.on_body = guava_request_on_body;
   conn->parser_settings.on_message_complete = guava_request_on_message_complete;
+
+  conn->server = NULL;
+  conn->keep_alive = GUAVA_FALSE;
+  conn->request = NULL;
+
   return conn;
 }
 
 void guava_conn_free(guava_conn_t *conn) {
-  if (conn->request) {
-    Py_DECREF(conn->request);
-  }
+  Py_XDECREF(conn->request);
 
   if (conn->auxiliary_current_header) {
     guava_string_free(conn->auxiliary_current_header);

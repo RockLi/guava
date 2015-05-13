@@ -8,6 +8,7 @@
 #define __GUAVA_SESSION_HANDLER_H__
 
 #include "guava_hashtable.h"
+#include "guava_string.h"
 
 /**
  * generate a new session id

@@ -1,10 +1,10 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
 
-#include "guava_module.h"
+#include "guava_module/guava_module.h"
 #include "guava_memory.h"
 
 extern PyObject *init_request(void);

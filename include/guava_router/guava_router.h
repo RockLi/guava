@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -7,7 +7,25 @@
 #ifndef __GUAVA_ROUTER_H__
 #define __GUAVA_ROUTER_H__
 
-#include "guava.h"
+#include "guava_config.h"
+#include "guava_string.h"
+#include "guava_session/guava_session_store.h"
+#include "guava_handler.h"
+
+typedef enum {
+  GUAVA_ROUTER_STATIC,
+  GUAVA_ROUTER_REST,
+  GUAVA_ROUTER_MVC,
+  GUAVA_ROUTER_CUSTOM
+} guava_router_type_t;
+
+struct guava_router {
+  guava_router_type_t    type;
+  guava_string_t         mount_point;
+  guava_string_t         package;
+  /* guava_session_store_t *session_store; */
+  PyObject              *routes; /* Special routes for overriding the default actions */
+};
 
 typedef struct {
   guava_router_t route;
@@ -40,16 +58,25 @@ guava_router_static_t *guava_router_static_new(void);
 void guava_router_static_free(guava_router_static_t *router);
 void guava_router_static_set_directory(guava_router_static_t *router, const char *directory);
 void guava_router_static_set_allow_index(guava_router_static_t *router, const guava_bool_t allow_index);
-void guava_router_static_route(guava_router_static_t *router, guava_request_t *req, guava_handler_t *handler);
+void guava_router_static_route(guava_router_static_t *router,
+                               struct guava_request  *req,
+                               struct guava_handler  *handler);
 
 guava_router_mvc_t *guava_router_mvc_new(void);
 void guava_router_mvc_free(guava_router_mvc_t *router);
-void guava_router_mvc_route(guava_router_mvc_t *router, guava_request_t *req, guava_handler_t *handler);
+
+void guava_router_mvc_route(guava_router_mvc_t  *router,
+                            struct guava_request *req,
+                            struct guava_handler *handler);
 
 guava_router_rest_t *guava_router_rest_new(void);
-void guava_router_rest_free(guava_router_rest_t *router);
-void guava_router_rest_route(guava_router_rest_t *router, guava_request_t *req, guava_handler_t *handler);
+void guava_router_rest_free(guava_router_rest_t   *router);
+void guava_router_rest_route(guava_router_rest_t  *router,
+                             struct guava_request *req,
+                             struct guava_handler *handler);
 
-PyObject *guava_router_get_best_matched_router(PyObject *routers, PyObject *request);
+PyObject *
+guava_router_get_best_matched_router(PyObject *routers,
+                                     PyObject *request);
 
 #endif /* !__GUAVA_ROUTER_H__ */

@@ -8,11 +8,11 @@ import guava
 
 class TestSessionMem(unittest.TestCase):
 
-	def setUp(self):
-		self.session_store = guava.session.SessionStore(type=guava.session.Mem)
+    def setUp(self):
+        self.session_store = guava.session.SessionStore(type=guava.session.Mem)
 
-	def test_mem_store(self):
-		session_id = '123456789'
+    def test_mem_store(self):
+        session_id = '123456789'
 		self.assertEqual(self.session_store.get(session_id), None)
 
 		self.session_store.set(session_id, {'name': 'Rock', 'age': 26})

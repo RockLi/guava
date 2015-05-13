@@ -5,7 +5,7 @@
  */
 
 #include "guava.h"
-#include "guava_module.h"
+#include "guava_module/guava_module.h"
 #include "guava_memory.h"
 #include "guava_url.h"
 

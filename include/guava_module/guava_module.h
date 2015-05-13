@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -7,12 +7,13 @@
 #ifndef __GUAVA_MODULE_H__
 #define __GUAVA_MODULE_H__
 
-#include "guava.h"
+#include "guava_config.h"
 #include "guava_router/guava_router.h"
 #include "guava_handler.h"
 #include "guava_request.h"
 #include "guava_url.h"
 #include "guava_cookie.h"
+#include "guava_server.h"
 
 typedef struct {
   PyObject_HEAD

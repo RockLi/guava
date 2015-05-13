@@ -57,7 +57,9 @@ static PyObject *Controller_set_header(Controller *self, PyObject *args) {
     return NULL;
   }
 
-  guava_response_t *resp = self->res->resp;
+  Response *res = (Response *)self->res;
+
+  guava_response_t *resp = res->res;
 
   char *key;
   char *value;
@@ -82,7 +84,9 @@ static PyObject *Controller_set_cookie(Controller *self, PyObject *args, PyObjec
                            "secure", "httponly", "expired", "max_age",
                            NULL};
 
-  guava_response_t *resp = self->res->resp;
+  Response *res = (Response *)self->res;
+
+  guava_response_t *resp = res->res;
 
   char *name = NULL;
   char *value = NULL;
@@ -132,7 +136,8 @@ static PyObject *Controller_write(Controller *self, PyObject *args) {
     return NULL;
   }
 
-  guava_response_t *resp = self->res->resp;
+  Response *res_o = (Response *)self->res;
+  guava_response_t *resp = res_o->res;
 
   char *data;
   if (!PyArg_ParseTuple(args, "s", &data)) {
@@ -151,7 +156,8 @@ static PyObject *Controller_set_status_code(Controller *self, PyObject *args) {
     return NULL;
   }
 
-  guava_response_t *resp = self->res->resp;
+  Response *res = (Response *)self->res;
+  guava_response_t *resp = res->res;
 
   int status_code = 200;
 
@@ -171,7 +177,8 @@ static PyObject *Controller_redirect(Controller *self, PyObject *args) {
     return NULL;
   }
 
-  guava_response_t *resp = self->res->resp;
+  Response *res_o = (Response *)self->res;
+  guava_response_t *resp = res_o->res;
 
   char *url = NULL;
 
@@ -208,8 +215,8 @@ static PyObject *Controller_get_SESSION(Controller *self, void *closure) {
       Cookie *id = NULL;
       PyObject *v = Py_None;
 
-      if (self->req && self->req->COOKIES) {
-        id = (Cookie *)PyDict_GetItemString(self->req->COOKIES, self->router->session_store->name);
+      if (self->req && ((Request *)self->req)->req->COOKIES) {
+        id = (Cookie *)PyDict_GetItemString(((Request *)self->req)->req->COOKIES, self->router->session_store->name);
       }
 
       if (id) {
@@ -243,13 +250,13 @@ static PyObject *Controller_get_GET(Controller *self, void *closure) {
     return PyDict_New();
   }
 
-  if (!self->req->GET) {
-    self->req->GET = PyDict_New();
+  if (!((Request *)self->req)->req->GET) {
+    ((Request *)self->req)->req->GET = PyDict_New();
   }
 
-  Py_INCREF(self->req->GET);
+  Py_INCREF(((Request *)self->req)->req->GET);
 
-  return self->req->GET;
+  return ((Request *)self->req)->req->GET;
 }
 
 static PyObject *Controller_get_POST(Controller *self, void *closure) {
@@ -262,13 +269,13 @@ static PyObject *Controller_get_POST(Controller *self, void *closure) {
     return PyDict_New();
   }
 
-  if (!self->req->POST) {
-    self->req->POST = PyDict_New();
+  if (!((Request *)self->req)->req->POST) {
+    ((Request *)self->req)->req->POST = PyDict_New();
   }
 
-  Py_INCREF(self->req->POST);
+  Py_INCREF(((Request *)self->req)->req->POST);
 
-  return self->req->POST;
+  return ((Request *)self->req)->req->POST;
 }
 
 static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
@@ -281,13 +288,13 @@ static PyObject *Controller_get_COOKIES(Controller *self, void *closure) {
     return PyDict_New();
   }
 
-  if (!self->req->COOKIES) {
-    self->req->COOKIES = PyDict_New();
+  if (!((Request *)self->req)->req->COOKIES) {
+    ((Request *)self->req)->req->COOKIES = PyDict_New();
   }
 
-  Py_INCREF(self->req->COOKIES);
+  Py_INCREF(((Request *)self->req)->req->COOKIES);
 
-  return self->req->COOKIES;
+  return ((Request *)self->req)->req->COOKIES;
 }
 
 static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
@@ -300,13 +307,13 @@ static PyObject *Controller_get_HEADERS(Controller *self, void *closure) {
     return PyDict_New();
   }
 
-  if (!self->req->HEADERS) {
-    self->req->HEADERS = PyDict_New();
+  if (!((Request *)self->req)->req->HEADERS) {
+    ((Request *)self->req)->req->HEADERS = PyDict_New();
   }
 
-  Py_INCREF(self->req->HEADERS);
+  Py_INCREF(((Request *)self->req)->req->HEADERS);
 
-  return self->req->HEADERS;
+  return ((Request *)self->req)->req->HEADERS;
 }
 
 static PyObject *Controller_set_request(Controller *self, PyObject *args) {
@@ -422,7 +429,7 @@ static PyMethodDef controller_module_methods[] = {
 };
 
 PyObject *init_controller(void) {
-  PyObject* m;
+  PyObject* m = NULL;
 
   if (PyType_Ready(&ControllerType) < 0) {
     return NULL;

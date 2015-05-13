@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The guava Authors. All rights reserved.
+ * Copyright 2015 The guava Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the LICENSE file.
  */
@@ -28,7 +28,7 @@ static void Request_dealloc(Request *self) {
 }
 
 static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
-  static char *kwlist[] = {"url", "path", "host", "method", "body", "HEADERS", "GET", "POST", NULL};
+  static char *kwlist[] = {"url", "path", "host", "method", "body", "HEADERS", "GET", "POST", "COOKIES", NULL};
 
   char *url = NULL;
   char *path = NULL;
@@ -38,10 +38,11 @@ static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
   PyObject *HEADERS = NULL;
   PyObject *GET = NULL;
   PyObject *POST = NULL;
+  PyObject *COOKIES = NULL;
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    kwds,
-                                   "|sssssOOO",
+                                   "|sssssOOOO",
                                    kwlist,
                                    &url,
                                    &path,
@@ -50,7 +51,8 @@ static int Request_init(Request *self, PyObject *args, PyObject *kwds) {
                                    &body,
                                    &HEADERS,
                                    &GET,
-                                   &POST
+                                   &POST,
+                                   &COOKIES
                                    )) {
 
     return -1;
@@ -207,16 +209,16 @@ static PyObject *Request_get_path(Request *self, void *closure) {
 }
 
 static PyGetSetDef Request_getseter[] = {
-  {"method", (getter)Request_get_method, (setter)Request_set_method, "method", NULL},
-  {"url", (getter)Request_get_url, (setter)Request_set_url, "url", NULL},
-  {"path", (getter)Request_get_path, (setter)Request_set_path, "path", NULL},
-  {"host", (getter)Request_get_host, (setter)Request_set_host, "host", NULL},
-  {"body", (getter)Request_get_body, (setter)Request_set_body, "body", NULL},
-  {"HEADERS", (getter)Request_get_HEADERS, (setter)Request_set_HEADERS, "HEADERS", NULL},
-  {"GET", (getter)Request_get_GET, (setter)Request_set_GET, "GET", NULL},
-  {"POST", (getter)Request_get_POST, (setter)Request_set_POST, "POST", NULL},
-  {"COOKIES", (getter)Request_get_COOKIES, (setter)Request_set_COOKIES, "COOKIES", NULL},
-  {"SESSION", (getter)Request_get_SESSION, (setter)Request_set_SESSION, "SESSIONS", NULL},
+  /* {"method", (getter)Request_get_method, (setter)Request_set_method, "method", NULL}, */
+  /* {"url", (getter)Request_get_url, (setter)Request_set_url, "url", NULL}, */
+  /* {"path", (getter)Request_get_path, (setter)Request_set_path, "path", NULL}, */
+  /* {"host", (getter)Request_get_host, (setter)Request_set_host, "host", NULL}, */
+  /* {"body", (getter)Request_get_body, (setter)Request_set_body, "body", NULL}, */
+  /* {"HEADERS", (getter)Request_get_HEADERS, (setter)Request_set_HEADERS, "HEADERS", NULL}, */
+  /* {"GET", (getter)Request_get_GET, (setter)Request_set_GET, "GET", NULL}, */
+  /* {"POST", (getter)Request_get_POST, (setter)Request_set_POST, "POST", NULL}, */
+  /* {"COOKIES", (getter)Request_get_COOKIES, (setter)Request_set_COOKIES, "COOKIES", NULL}, */
+  /* {"SESSION", (getter)Request_get_SESSION, (setter)Request_set_SESSION, "SESSIONS", NULL}, */
   {NULL}
 };
 

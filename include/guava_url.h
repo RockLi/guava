@@ -7,6 +7,7 @@
 #ifndef __GUAVA_URL_H__
 #define __GUAVA_URL_H__
 
+#include "guava_config.h"
 #include "guava_string.h"
 #include "guava_hashtable.h"
 
