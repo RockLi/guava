@@ -4,7 +4,7 @@ Guava is a super lightweight and high performance web framework for Python writt
 
 Keep in mind, this project is not to revent the wheel.
 
-If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to construct your own web framework with the benifits of high performance which guava gives you.
+If you don't like the features Guava supplied, you can use the underlying structures like **router**, **session**, **request**, **response**, **builtin web server** to construct your own web framework with the benefits of high performance which guava gives you.
 
 You can check out the detailed explaination of guava in my blog. [Link](http://code-trick.com)
 

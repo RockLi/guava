@@ -367,7 +367,7 @@ int guava_request_on_message_complete(http_parser *parser) {
       if (router->router->type != GUAVA_ROUTER_CUSTOM) {
         /*
          * Cause we already try to get the best matched router
-         * But we still need to pass the custome router in case use defined some speciall routes
+         * But we still need to pass the custom router in case use defined some special routes
          */
         continue;
       }
